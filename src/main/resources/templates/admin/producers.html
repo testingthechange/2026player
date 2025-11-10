@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Producers</title>
+</head>
+<body>
+    <h1>Producers</h1>
+    <a th:href="@{/admin/create-producer}">+ Add Producer</a>
+    <ul>
+        <li th:each="p : ${producers}">
+            <a th:href="@{'/admin/projects/' + ${p.id}}" th:text="${p.name}"></a>
+        </li>
+    </ul>
+</body>
+</html>

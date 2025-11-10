@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Projects</title>
+</head>
+<body>
+    <h1>Projects for Producer</h1>
+    <a th:href="@{'/admin/projects/' + ${producerId} + '/create'}">+ Create Project</a>
+    <ul>
+        <li th:each="proj : ${projects}">
+            <span th:text="${proj.name}"></span> —
+            <a th:href="@{'/admin/magic/' + ${proj.magicLink}}">Magic Link</a>
+        </li>
+    </ul>
+    <p><a th:href="@{/admin/producers}">← Back to Producers</a></p>
+</body>
+</html>

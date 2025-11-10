@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Accounts - Block Radius Admin</title>
+    <meta charset="UTF-8"/>
+    <style>
+        body { font-family: sans-serif; margin: 0; padding: 0; }
+        header { background: #222; color: #fff; padding: 10px 20px; }
+        header a { color: #ddd; margin-right: 15px; text-decoration: none; }
+        header a:hover { text-decoration: underline; }
+        main { padding: 20px; max-width: 900px; margin: 0 auto; }
+    </style>
+</head>
+<body>
+<header>
+    <span><strong>Block Radius Admin</strong></span>
+    &nbsp;&nbsp;
+    <a th:href="@{/dashboard}">Dashboard</a>
+    <a th:href="@{/producer}">Producer</a>
+    <a th:href="@{/pending}">Pending</a>
+    <a th:href="@{/meta}">Meta</a>
+    <a th:href="@{/export}">Export</a>
+    <a th:href="@{/accounts}">Accounts</a>
+    <a th:href="@{/logout}">Logout</a>
+</header>
+
+<main>
+    <h1>Accounts</h1>
+    <p>
+        Shell for managing producer accounts and magic links. For now,
+        this is just a placeholder.
+    </p>
+</main>
+</body>
+</html>

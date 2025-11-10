@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Producer</title>
+</head>
+<body>
+    <h1>Create Producer</h1>
+
+    <form th:action="@{/admin/producers/create}" method="post">
+        <p>
+            <label for="name">Producer Name:</label>
+            <input type="text" id="name" name="name" required>
+        </p>
+        <p>
+            <label for="email">Producer Email:</label>
+            <input type="email" id="email" name="email" required>
+        </p>
+        <p>
+            <button type="submit">Create Producer</button>
+        </p>
+    </form>
+
+    <p><a th:href="@{/admin/producers}">← Back to Producers</a></p>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Producer Files - Block Radius Admin</title>
+    <meta charset="UTF-8"/>
+    <style>
+        body { font-family: sans-serif; margin: 0; padding: 0; }
+        header { background: #222; color: #fff; padding: 10px 20px; }
+        header a { color: #ddd; margin-right: 15px; text-decoration: none; }
+        header a:hover { text-decoration: underline; }
+        main { padding: 20px; max-width: 900px; margin: 0 auto; }
+        textarea { width: 100%; max-width: 900px; }
+        .status { margin-top: 10px; font-style: italic; }
+    </style>
+</head>
+<body>
+<header>
+    <span><strong>Block Radius Admin</strong></span>
+    &nbsp;&nbsp;
+    <a th:href="@{/dashboard}">Dashboard</a>
+    <a th:href="@{/producer}">Producer Files</a>
+    <a th:href="@{/pending}">Pending Room</a>
+    <a th:href="@{/meta}">Meta</a>
+    <a th:href="@{/export}">SaaS Export</a>
+    <a th:href="@{/accounts}">Admin Accounts</a>
+    <a th:href="@{/logout}">Logout</a>
+</header>
+
+<main>
+    <h1>Producer Worksheet</h1>
+    <p>
+        Enter the song list and bridge list for this producer file. When you click
+        <em>Save</em>, the data will be written as JSON into the pending-room folder.
+    </p>
+
+    <!-- optional status message from controller -->
+    <div class="status" th:text="${message}"></div>
+
+    <form method="post" action="/producer/save">
+        <label for="songs"><strong>Song List</strong></label><br/>
+        <textarea id="songs" name="songs" rows="8"
+                  placeholder="Song 1&#10;Song 2&#10;Song 3"></textarea><br/><br/>
+
+        <label for="bridges"><strong>Bridges</strong></label><br/>
+        <textarea id="bridges" name="bridges" rows="6"
+                  placeholder="Intro -> Verse 1&#10;Verse 1 -> Chorus"></textarea><br/><br/>
+
+        <button type="submit">Save to pending-room</button>
+    </form>
+</main>
+</body>
+</html>

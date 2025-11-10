@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Home - Album Player</title>
+    <style>
+        table { border-collapse: collapse; margin-top: 15px; width: 80%; font-size: 0.9em; }
+        th, td { border: 1px solid #ccc; padding: 5px; text-align: center; }
+        th { background: #f5f5f5; }
+        .controls { display: flex; align-items: center; margin-top: 15px; flex-wrap: wrap; }
+        .controls button { margin: 4px 6px; }
+        .volume-container { display: flex; flex-direction: column; align-items: center; margin-left: 10px; }
+        .volume-container input[type=range] { writing-mode: bt-lr; -webkit-appearance: slider-vertical; width: 6px; height: 70px; }
+        .progress-container { margin-top: 6px; display: flex; align-items: center; }
+        .progress-container input[type=range] { width: 380px; margin: 0 8px; }
+        .now-playing { font-size: 0.9em; color: #444; margin-top: 6px; }
+        .filename { font-size: 0.8em; color: #333; margin-top: 3px; }
+        input.song-title { font-size: 0.9em; color: #222; font-weight: 500; }
+    </style>
+    <script>
+        let songs = new Array(9);
+        let bridges = new Array(8);
+        let playSequence = [];
+        let current = 0;
+
+        function buildPlaySequence(includeBridges = true, premium = false) {
+            playSequence = [];
+            const maxSongs = premium ? 9 : 8;
+            for (let i = 0; i < maxSongs; i++) {
+                if (songs[i]) {
+                    playSequence.push({ type: "song", url: songs[i], name: document.getElementById("songFile" + (i+1)).textContent });
+                }
+                if (includeBridges && i < maxSongs - 1 && bridges[i]) {
+                    playSequence.push({ type: "bridge", url: bridges[i], name: document.getElementById("bridgeFile" + (i+1)).textContent });
+                }
+            }
+            current = 0;
+        }
+
+        function playSong(index) {
+            if (!playSequence[index]) return;
+            current = index;
+            const player = document.getElementById("audioPlayer");
+            player.src = playSequence[index].url;
+            player.play();
+            document.getElementById("nowPlaying").textContent =
+                "Now Playing: " + (playSequence[index].name || "Unknown File");
+        }
+
+        function playRetailAlbum() { buildPlaySequence(false, false); playSong(0); }
+        function playRetailBridge() { buildPlaySequence(true, false); playSong(0); }
+        function playPremiumAlbum() { buildPlaySequence(false, true); playSong(0); }
+        function playPremiumBridge() { buildPlaySequence(true, true); playSong(0); }
+
+        // 🔀 Premium Shuffle (9 songs, no bridges)
+        function playPremiumShuffle() {
+            buildPlaySequence(false, true); // build with 9 songs, no bridges
+            for (let i = playSequence.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [playSequence[i], playSequence[j]] = [playSequence[j], playSequence[i]];
+            }
+            current = 0;
+            playSong(0);
+        }
+
+        function stop() {
+            const player = document.getElementById("audioPlayer");
+            player.pause(); player.currentTime = 0; current = 0;
+            document.getElementById("nowPlaying").textContent = "";
+        }
+
+        function setVolume(val) { document.getElementById("audioPlayer").volume = val; }
+
+        function handleSongUpload(index, input, labelId) {
+            if (input.files.length > 0) {
+                const file = input.files[0]; const url = URL.createObjectURL(file);
+                songs[index] = url; document.getElementById(labelId).textContent = file.name;
+            }
+        }
+        function handleBridgeUpload(index, input, labelId) {
+            if (input.files.length > 0) {
+                const file = input.files[0]; const url = URL.createObjectURL(file);
+                bridges[index] = url; document.getElementById(labelId).textContent = file.name;
+            }
+        }
+
+        // ✅ Smart Export
+        function confirmExport() {
+            if (!songs.some(s => s)) {
+                alert("⚠️ No songs uploaded — nothing to export.");
+                return;
+            }
+
+            if (confirm("Are you sure you want to export?")) {
+                if (confirm("Last chance — really export?")) {
+                    let exports = [];
+
+                    // Retail Album (needs at least 8 songs)
+                    if (songs.slice(0, 8).every(s => s)) {
+                        exports.push("Retail Album (8 songs, no bridges)");
+                    }
+
+                    // Retail Bridge (needs 8 songs + at least 1 bridge)
+                    if (songs.slice(0, 8).every(s => s) && bridges.some(b => b)) {
+                        exports.push("Retail Bridge (8 songs, with bridges)");
+                    }
+
+                    // Premium Album (needs all 9 songs)
+                    if (songs.every(s => s)) {
+                        exports.push("Premium Album (9 songs, no bridges)");
+                    }
+
+                    // Premium Bridge (needs all 9 songs + at least 1 bridge)
+                    if (songs.every(s => s) && bridges.some(b => b)) {
+                        exports.push("Premium Bridge (9 songs, with bridges)");
+                    }
+
+                    // Premium Shuffle (needs all 9 songs)
+                    if (songs.every(s => s)) {
+                        exports.push("Premium Shuffle (9 songs, shuffled)");
+                    }
+
+                    if (exports.length > 0) {
+                        alert("✅ Exported:\n" + exports.map((e, i) => `${i + 1}. ${e}`).join("\n"));
+                    } else {
+                        alert("⚠️ Not enough songs/bridges uploaded for any product.");
+                    }
+                }
+            }
+        }
+
+        function updateBridgeLabels(songIndex) {
+            const titleInput = document.getElementById("songTitle" + (songIndex + 1));
+            const title = titleInput.value.trim();
+            document.querySelectorAll("[data-from='" + (songIndex + 1) + "']").forEach(el => {
+                el.textContent = "Song " + (songIndex + 1) + (title ? " (" + title + ")" : "");
+            });
+            document.querySelectorAll("[data-to='" + (songIndex + 1) + "']").forEach(el => {
+                el.textContent = "Song " + (songIndex + 1) + (title ? " (" + title + ")" : "");
+            });
+        }
+
+        window.onload = function() {
+            const player = document.getElementById("audioPlayer");
+            const progress = document.getElementById("progressBar");
+            const currentTimeLabel = document.getElementById("currentTime");
+            const durationLabel = document.getElementById("duration");
+
+            player.addEventListener("timeupdate", () => {
+                if (player.duration) {
+                    progress.value = (player.currentTime / player.duration) * 100;
+                    currentTimeLabel.textContent = formatTime(player.currentTime);
+                    durationLabel.textContent = formatTime(player.duration);
+                }
+            });
+
+            progress.addEventListener("input", () => {
+                if (player.duration) {
+                    player.currentTime = (progress.value / 100) * player.duration;
+                }
+            });
+
+            player.addEventListener("ended", () => {
+                if (current + 1 < playSequence.length) {
+                    playSong(current + 1);
+                }
+            });
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60).toString().padStart(2, '0');
+            return `${mins}:${secs}`;
+        }
+    </script>
+</head>
+<body>
+    <h1>Album Player</h1>
+    <div th:replace="fragments/navbar :: navbar"></div>
+
+    <audio id="audioPlayer"></audio>
+
+    <div class="controls">
+        <button onclick="playRetailAlbum()">▶️ Retail Album</button>
+        <button onclick="playRetailBridge()">▶️ Retail Bridge</button>
+        <button onclick="playPremiumAlbum()">▶️ Premium Album</button>
+        <button onclick="playPremiumBridge()">▶️ Premium Bridge</button>
+        <button onclick="playPremiumShuffle()">🔀 Premium Shuffle</button>
+        <button onclick="stop()">⏹ Stop</button>
+        <div class="volume-container">
+            <label>🔊</label>
+            <input type="range" min="0" max="1" step="0.01" value="1" onchange="setVolume(this.value)">
+        </div>
+    </div>
+
+    <div class="progress-container">
+        <span id="currentTime">0:00</span>
+        <input type="range" id="progressBar" min="0" max="100" value="0">
+        <span id="duration">0:00</span>
+    </div>
+    <div id="nowPlaying" class="now-playing"></div>
+
+    <h2>Songs</h2>
+    <table>
+        <thead><tr><th>Song #</th><th>Title</th><th>Upload File</th></tr></thead>
+        <tbody>
+            <tr><td>1</td><td><input type="text" id="songTitle1" class="song-title" placeholder="Song 1" oninput="updateBridgeLabels(0)"></td><td><input type="file" accept="audio/*" onchange="handleSongUpload(0,this,'songFile1')"><div id="songFile1" class="filename"></div></td></tr>
+            <tr><td>2</td><td><input type="text" id="songTitle2" class="song-title" placeholder="Song 2" oninput="updateBridgeLabels(1)"></td><td><input type="file" accept="audio/*" onchange="handleSongUpload(1,this,'songFile2')"><div id="songFile2" class="filename"></div></td></tr>
+            <tr><td>3</td><td><input type="text" id="songTitle3" class="song-title" placeholder="Song 3" oninput="updateBridgeLabels(2)"></td><td><input type="file" accept="audio/*" onchange="handleSongUpload(2,this,'songFile3')"><div id="songFile3" class="filename"></div></td></tr>
+            <tr><td>4</td><td><input type="text" id="songTitle4" class="song-title" placeholder="Song 4" oninput="updateBridgeLabels(3)"></td><td><input type="file" accept="audio/*" onchange="handleSongUpload(3,this,'songFile4')"><div id="songFile4" class="filename"></div></td></tr>
+            <tr><td>5</td><td><input type="text" id="songTitle5" class="song-title" placeholder="Song 5" oninput="updateBridgeLabels(4)"></td><td><input type="file" accept="audio/*" onchange="handleSongUpload(4,this,'songFile5')"><div id="songFile5" class="filename"></div></td></tr>
+            <tr><td>6</td><td><input type="text" id="songTitle6" class="song-title" placeholder="Song 6" oninput="updateBridgeLabels(5)"></td><td><input type="file" accept="audio/*" onchange="handleSongUpload(5,this,'songFile6')"><div id="songFile6" class="filename"></div></td></tr>
+            <tr><td>7</td><td><input type="text" id="songTitle7" class="song-title" placeholder="Song 7" oninput="updateBridgeLabels(6)"></td><td><input type="file" accept="audio/*" onchange="handleSongUpload(6,this,'songFile7')"><div id="songFile7" class="filename"></div></td></tr>
+            <tr><td>8</td><td><input type="text" id="songTitle8" class="song-title" placeholder="Song 8" oninput="updateBridgeLabels(7)"></td><td><input type="file" accept="audio/*" onchange="handleSongUpload(7,this,'songFile8')"><div id="songFile8" class="filename"></div></td></tr>
+            <tr><td>9*</td><td><input type="text" id="songTitle9" class="song-title" placeholder="Song 9" oninput="updateBridgeLabels(8)"></td><td><input type="file" accept="audio/*" onchange="handleSongUpload(8,this,'songFile9')"><div id="songFile9" class="filename"></div></td></tr>
+        </tbody>
+    </table>
+
+    <h2>Bridges</h2>
+    <table>
+        <thead><tr><th>From</th><th>To</th><th>Upload MP3</th></tr></thead>
+        <tbody>
+            <tr><td data-from="1">Song 1</td><td data-to="2">Song 2</td><td><input type="file" accept="audio/*" onchange="handleBridgeUpload(0,this,'bridgeFile1')"><div id="bridgeFile1" class="filename"></div></td></tr>
+            <tr><td data-from="2">Song 2</td><td data-to="3">Song 3</td><td><input type="file" accept="audio/*" onchange="handleBridgeUpload(1,this,'bridgeFile2')"><div id="bridgeFile2" class="filename"></div></td></tr>
+            <tr><td data-from="3">Song 3</td><td data-to="4">Song 4</td><td><input type="file" accept="audio/*" onchange="handleBridgeUpload(2,this,'bridgeFile3')"><div id="bridgeFile3" class="filename"></div></td></tr>
+            <tr><td data-from="4">Song 4</td><td data-to="5">Song 5</td><td><input type="file" accept="audio/*" onchange="handleBridgeUpload(3,this,'bridgeFile4')"><div id="bridgeFile4" class="filename"></div></td></tr>
+            <tr><td data-from="5">Song 5</td><td data-to="6">Song 6</td><td><input type="file" accept="audio/*" onchange="handleBridgeUpload(4,this,'bridgeFile5')"><div id="bridgeFile5" class="filename"></div></td></tr>
+            <tr><td data-from="6">Song 6</td><td data-to="7">Song 7</td><td><input type="file" accept="audio/*" onchange="handleBridgeUpload(5,this,'bridgeFile6')"><div id="bridgeFile6" class="filename"></div></td></tr>
+            <tr><td data-from="7">Song 7</td><td data-to="8">Song 8</td><td><input type="file" accept="audio/*" onchange="handleBridgeUpload(6,this,'bridgeFile7')"><div id="bridgeFile7" class="filename"></div></td></tr>
+            <tr><td data-from="8">Song 8</td><td data-to="9">Song 9*</td><td><input type="file" accept="audio/*" onchange="handleBridgeUpload(7,this,'bridgeFile8')"><div id="bridgeFile8" class="filename"></div></td></tr>
+        </tbody>
+    </table>
+
+        <button onclick="confirmExport()">💾 Save / Export</button>
+    </div>
+</body>
+</html>

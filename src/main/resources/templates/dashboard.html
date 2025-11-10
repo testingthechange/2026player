@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Dashboard - Block Radius Admin</title>
+    <meta charset="UTF-8"/>
+    <style>
+        body { font-family: sans-serif; margin: 0; padding: 0; }
+        header { background: #222; color: #fff; padding: 10px 20px; }
+        header a { color: #ddd; margin-right: 15px; text-decoration: none; }
+        header a:hover { text-decoration: underline; }
+        main { padding: 20px; max-width: 900px; margin: 0 auto; }
+        ul { line-height: 1.6; }
+    </style>
+</head>
+<body>
+<header>
+    <span><strong>Block Radius Admin</strong></span>
+    &nbsp;&nbsp;
+    <a th:href="@{/dashboard}">Dashboard</a>
+    <a th:href="@{/producer}">Producer</a>
+    <a th:href="@{/pending}">Pending</a>
+    <a th:href="@{/meta}">Meta</a>
+    <a th:href="@{/export}">Export</a>
+    <a th:href="@{/accounts}">Accounts</a>
+    <a th:href="@{/logout}">Logout</a>
+</header>
+
+<main>
+    <h1>Dashboard</h1>
+    <p>
+        Welcome to the Block Radius Admin console. Use this as a starting point
+        to build and export adaptive albums.
+    </p>
+
+    <h2>Quick links</h2>
+    <ul>
+        <li><a th:href="@{/producer}">Compose album structure (songs, bridges, rules)</a></li>
+        <li><a th:href="@{/meta}">Upload artwork, docs, and credits (meta)</a></li>
+        <li><a th:href="@{/pending}">Review pending files and validation status</a></li>
+        <li><a th:href="@{/export}">Push validated projects to SaaS</a></li>
+        <li><a th:href="@{/accounts}">Manage producer accounts (future)</a></li>
+    </ul>
+</main>
+</body>
+</html>

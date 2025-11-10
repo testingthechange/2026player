@@ -1,0 +1,11 @@
+# Maven
+/target/
+/.idea/
+/*.iml
+*.log
+
+# OS junk
+.DS_Store
+
+# VS Code / editor configs
+.vscode/

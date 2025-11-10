@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Worksheet Meta</title>
+</head>
+<body>
+  <h1>Worksheet Meta</h1>
+  <p>Producer [[${producerId}]], Project [[${projectIndex}]]</p>
+</body>
+</html>
+EOFmvn clean spring-boot:run
+cat > src/main/resources/templates/worksheet/worksheet-meta.html <<'EOF'
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Worksheet Meta</title>
+</head>
+<body>
+  <h1>Worksheet Meta</h1>
+  <p>Producer [[${producerId}]], Project [[${projectIndex}]]</p>
+</body>
+</html>

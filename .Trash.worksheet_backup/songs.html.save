@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Worksheet Songs</title>
+</head>
+<body>
+  <h1>Worksheet Songs</h1>
+  <p th:text="'Producer: ' + ${producerId}"></p>
+  <p th:text="'Project: ' + ${projectIndex}"></p>
+
+  <nav>
+    <a th:href="@{'/worksheet/' + ${producerId} + '/' + ${projectIndex} + '/home'}">Back to Home</a> |
+    <a th:href="@{'/worksheet/' + ${producerId} + '/' + ${projectIndex} + '/meta'}">Go to Meta</a>
+  </nav>
+</body>
+</html>O
+

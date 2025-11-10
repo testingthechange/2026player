@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="'Song ' + ${songId}">Song Page</title>
+    <style>
+        table { border-collapse: collapse; margin-top: 15px; width: 90%; font-size: 0.9em; }
+        th, td { border: 1px solid #ccc; padding: 6px; text-align: center; }
+        th { background: #f5f5f5; }
+        .filename { font-size: 0.85em; color: #333; margin-top: 4px; }
+        .player-line { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+        .player-line input[type=range] { flex: 1; }
+        .button-bar { margin-top: 20px; display: flex; gap: 15px; }
+        .button-bar button { padding: 8px 16px; font-size: 1em; }
+    </style>
+    <script>
+        function handleBridgeUpload(id, input) {
+            if (input.files.length > 0) {
+                const file = input.files[0];
+                document.getElementById("fileLabel" + id).textContent = file.name;
+                const audio = document.getElementById("audio" + id);
+                audio.src = URL.createObjectURL(file);
+            }
+        }
+        function play(id) {
+            document.getElementById("audio" + id).play();
+        }
+        function stop(id) {
+            const audio = document.getElementById("audio" + id);
+            audio.pause();
+            audio.currentTime = 0;
+        }
+        function initProgress(id) {
+            const audio = document.getElementById("audio" + id);
+            const progress = document.getElementById("progress" + id);
+            audio.addEventListener("timeupdate", () => {
+                if (audio.duration) {
+                    progress.value = (audio.currentTime / audio.duration) * 100;
+                }
+            });
+            progress.addEventListener("input", () => {
+                if (audio.duration) {
+                    audio.currentTime = (progress.value / 100) * audio.duration;
+                }
+            });
+        }
+        function renderRows(songId) {
+            const tbody = document.getElementById("bridgesTableBody");
+            tbody.innerHTML = "";
+            let counter = 1;
+            for (let i = 1; i <= 9; i++) {
+                if (i === songId) continue;
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>Song ${songId}</td>
+                    <td>Song ${i}</td>
+                    <td>
+                        <input type="file" accept="audio/*" onchange="handleBridgeUpload(${counter},this)">
+                        <div id="fileLabel${counter}" class="filename"></div>
+                        <div class="player-line">
+                            <button onclick="play(${counter})">▶️</button>
+                            <button onclick="stop(${counter})">⏹</button>
+                            <input type="range" id="progress${counter}" min="0" max="100" value="0">
+                        </div>
+                        <audio id="audio${counter}"></audio>
+                    </td>
+                `;
+                tbody.appendChild(row);
+                initProgress(counter);
+                counter++;
+            }
+        }
+        window.onload = function() {
+            const songId = parseInt(document.getElementById("songIdHolder").value);
+            renderRows(songId);
+        }
+    </script>
+</head>
+<body>
+    <div th:replace="fragments/navbar :: navbar"></div>
+    <h1 th:text="'Song ' + ${songId} + ' Page'">Song Page</h1>
+    <input type="hidden" id="songIdHolder" th:value="${songId}">
+
+    <!-- Dropdown navigation -->
+    <label for="songSelect">Jump to:</label>
+    <select id="songSelect" onchange="location.href='/song/' + this.value">
+        <option value="1" th:selected="${songId == 1}">Song 1</option>
+        <option value="2" th:selected="${songId == 2}">Song 2</option>
+        <option value="3" th:selected="${songId == 3}">Song 3</option>
+        <option value="4" th:selected="${songId == 4}">Song 4</option>
+        <option value="5" th:selected="${songId == 5}">Song 5</option>
+        <option value="6" th:selected="${songId == 6}">Song 6</option>
+        <option value="7" th:selected="${songId == 7}">Song 7</option>
+        <option value="8" th:selected="${songId == 8}">Song 8</option>
+        <option value="9" th:selected="${songId == 9}">Song 9*</option>
+    </select>
+
+    <h2>Bridges for this Song</h2>
+    <table>
+        <thead>
+            <tr><th>From</th><th>To</th><th>Upload + Player</th></tr>
+        </thead>
+        <tbody id="bridgesTableBody"></tbody>
+    </table>
+
+    <!-- Two-tier buttons -->
+    <div class="button-bar">
+        <button onclick="alert('Preview not implemented yet')">👀 Preview Bridges</button>
+        <button onclick="confirm('Save/export placeholder')">💾 Save / Export</button>
+    </div>
+</body>
+</html>

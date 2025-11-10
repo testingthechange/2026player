@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Meta &amp; Assets - Block Radius Admin</title>
+    <meta charset="UTF-8"/>
+    <style>
+        body { font-family: sans-serif; margin: 0; padding: 0; }
+        header { background: #222; color: #fff; padding: 10px 20px; }
+        header a { color: #ddd; margin-right: 15px; text-decoration: none; }
+        header a:hover { text-decoration: underline; }
+        main { padding: 20px; max-width: 900px; margin: 0 auto; }
+        input[type="text"] { width: 100%; max-width: 700px; }
+    </style>
+</head>
+<body>
+<header>
+    <span><strong>Block Radius Admin</strong></span>
+    &nbsp;&nbsp;
+    <a th:href="@{/dashboard}">Dashboard</a>
+    <a th:href="@{/producer}">Producer</a>
+    <a th:href="@{/pending}">Pending</a>
+    <a th:href="@{/meta}">Meta</a>
+    <a th:href="@{/export}">Export</a>
+    <a th:href="@{/accounts}">Accounts</a>
+    <a th:href="@{/logout}">Logout</a>
+</header>
+
+<main>
+    <h1>Meta &amp; Assets</h1>
+    <p>
+        Shell for uploading artwork, documents and credits. Later we’ll generate
+        a meta.json manifest into the pending room.
+    </p>
+
+    <form method="post" action="/meta/save" enctype="multipart/form-data">
+        <h3>Credits</h3>
+        <label>Songwriter(s)</label><br/>
+        <input type="text" name="songwriters" placeholder="Name1, Name2"/><br/><br/>
+
+        <label>Producer(s)</label><br/>
+        <input type="text" name="producers" placeholder="Name1, Name2"/><br/><br/>
+
+        <label>Engineer(s)</label><br/>
+        <input type="text" name="engineers" placeholder="Name1, Name2"/><br/><br/>
+
+        <h3>Assets</h3>
+        <label>Images</label><br/>
+        <input type="file" name="images" multiple/><br/><br/>
+
+        <label>Videos</label><br/>
+        <input type="file" name="videos" multiple/><br/><br/>
+
+        <label>Documents</label><br/>
+        <input type="file" name="documents" multiple/><br/><br/>
+
+        <button type="submit">Save Meta to Pending Room</button>
+    </form>
+</main>
+</body>
+</html>

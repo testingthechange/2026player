@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Pending Room - Block Radius Admin</title>
+    <meta charset="UTF-8"/>
+    <style>
+        body { font-family: sans-serif; margin: 0; padding: 0; }
+        header { background: #222; color: #fff; padding: 10px 20px; }
+        header a { color: #ddd; margin-right: 15px; text-decoration: none; }
+        header a:hover { text-decoration: underline; }
+        main { padding: 20px; max-width: 900px; margin: 0 auto; }
+        table { border-collapse: collapse; width: 100%; max-width: 900px; }
+        th, td { border: 1px solid #ccc; padding: 6px 8px; text-align: left; }
+        th { background: #f5f5f5; }
+    </style>
+</head>
+<body>
+<header>
+    <span><strong>Block Radius Admin</strong></span>
+    &nbsp;&nbsp;
+    <a th:href="@{/dashboard}">Dashboard</a>
+    <a th:href="@{/producer}">Producer</a>
+    <a th:href="@{/pending}">Pending</a>
+    <a th:href="@{/meta}">Meta</a>
+    <a th:href="@{/export}">Export</a>
+    <a th:href="@{/accounts}">Accounts</a>
+    <a th:href="@{/logout}">Logout</a>
+</header>
+
+<main>
+    <h1>Pending Room</h1>
+    <p>
+        Shell for listing JSON/meta files in the pending room. Later we’ll
+        populate this table from the backend and hook up approve/export buttons.
+    </p>
+
+    <table>
+        <thead>
+        <tr>
+            <th>File Name</th>
+            <th>Status</th>
+            <th>Approve &amp; Export</th>
+            <th>Reject</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>example.json</td>
+            <td>Prototype (no real data yet)</td>
+            <td><button disabled>Approve &amp; Export</button></td>
+            <td><button disabled>Reject</button></td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>
