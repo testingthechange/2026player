@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Album Worksheet</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f4f7;
+        }
+
+        /* TOP NAV */
+        .top-nav-wrap {
+            background: #0f172a;
+            color: #e5e7eb;
+            box-shadow: 0 1px 3px rgba(15,23,42,0.5);
+        }
+
+        .top-nav {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .top-nav-left {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .top-nav-links {
+            display: flex;
+            gap: 16px;
+            font-size: 0.9rem;
+        }
+
+        .top-nav-links a {
+            color: #cbd5f5;
+            text-decoration: none;
+            padding-bottom: 2px;
+            border-bottom: 2px solid transparent;
+        }
+
+        .top-nav-links a:hover {
+            border-bottom-color: #60a5fa;
+        }
+
+        .top-nav-links a.active {
+            color: #ffffff;
+            border-bottom-color: #facc15;
+        }
+
+        .page {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 24px 16px 40px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 4px;
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            margin: 0 0 8px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        /* MAIN PLAYER */
+        .player-card {
+            background: #ffffff;
+            border-radius: 14px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            display: grid;
+            grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+            gap: 16px;
+            align-items: center;
+        }
+
+        .player-main {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .player-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .player-track {
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .player-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .btn {
+            border-radius: 999px;
+            border: none;
+            padding: 7px 16px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: #fff;
+        }
+
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+        .player-meta {
+            font-size: 0.9rem;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .meta-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .meta-label {
+            color: #6b7280;
+        }
+
+        .meta-value {
+            font-weight: 500;
+        }
+
+        .progress-bar {
+            position: relative;
+            width: 100%;
+            height: 10px;
+            border-radius: 999px;
+            background: #e5e7eb;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .progress-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 0%;
+            background: #2563eb;
+            transition: width 0.1s linear;
+        }
+
+        @media (max-width: 800px) {
+            .player-card {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        /* SECTIONS – TABLE LAYOUT */
+        .section-block {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+            padding: 16px 16px 56px; /* bottom for lock bar */
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .section-description {
+            font-size: 0.9rem;
+            color: #777;
+            margin: 0 0 12px;
+        }
+
+        .grid-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            table-layout: fixed;
+        }
+
+        .grid-table th,
+        .grid-table td {
+            border: 1px solid #e5e7eb;
+            padding: 6px 8px;
+            text-align: left;
+        }
+
+        .grid-table th {
+            background: #f9fafb;
+            font-weight: 600;
+        }
+
+        .grid-table td.number-cell {
+            width: 50px;
+            text-align: center;
+            background: #f9fafb;
+            font-weight: 500;
+        }
+
+        .col-title {
+            width: 18%;
+        }
+
+        .col-upload {
+            width: 20%;
+        }
+
+        .col-preview {
+            width: 40%;
+        }
+
+        .grid-table input[type="text"],
+        .grid-table input[type="file"] {
+            width: 100%;
+            font-size: 0.85rem;
+            border-radius: 4px;
+            border: 1px solid #d1d5db;
+            padding: 4px 6px;
+            box-sizing: border-box;
+        }
+
+        .song-audio {
+            width: 100%;
+        }
+
+        /* Section lock bar */
+        .section-lock-bar {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 8px 12px;
+            border-top: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 12px;
+            background: #fafafa;
+            border-radius: 0 0 12px 12px;
+        }
+
+        .lock-status-label {
+            font-size: 0.85rem;
+            color: #555;
+        }
+
+        .lock-toggle-btn {
+            border: none;
+            border-radius: 999px;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+        .lock-toggle-btn.locked {
+            background: #1d4ed8;
+            color: #fff;
+        }
+
+        .lock-toggle-btn.unlocked {
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+        .master-actions {
+            margin-top: 24px;
+            padding-top: 12px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .master-info {
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .master-warning {
+            font-size: 0.85rem;
+            color: #b91c1c;
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 700px) {
+            .master-actions {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<div class="top-nav-wrap">
+    <div class="top-nav">
+        <div class="top-nav-left">
+            Album Player
+        </div>
+        <nav class="top-nav-links">
+            <a href="/home" class="active">Home</a>
+        </nav>
+    </div>
+</div>
+
+<div class="page">
+    <h1>Album Worksheet</h1>
+    <p class="subtitle">
+        Configure your album songs, transition versions, and NFT mix bridges. Lock each section when done, then use Master Save.
+    </p>
+
+    <!-- MAIN PLAYER #1 -->
+    <section class="player-card">
+        <div class="player-main">
+            <div class="player-title">Album Player</div>
+
+            <div class="player-track">
+                <span class="meta-label">Now playing:</span>
+                <span class="meta-value" id="nowPlaying">No track</span>
+            </div>
+
+            <div class="player-controls">
+                <button type="button" id="playBtn" class="btn btn-primary">▶ Play</button>
+                <button type="button" id="pauseBtn" class="btn btn-secondary">⏸ Pause</button>
+                <button type="button" id="stopBtn" class="btn btn-secondary">■ Stop</button>
+                <button type="button" id="albumVersionBtn" class="btn btn-secondary">
+                    Album version
+                </button>
+                <button type="button" id="bridgeBtn" class="btn btn-secondary">
+                    Bridge
+                </button>
+                <button type="button" id="albumBridgeBtn" class="btn btn-secondary">
+                    NFT mix album
+                </button>
+            </div>
+        </div>
+
+        <div class="player-meta">
+            <div class="meta-row">
+                <span class="meta-label">Sequence:</span>
+                <span class="meta-value" id="sequenceLabel">Idle</span>
+            </div>
+            <div class="progress-bar" id="mainProgressBar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 1 -->
+    <form id="worksheetForm" action="/saveWorksheet" method="post">
+        <section class="section-block" data-section-id="section1" id="section1-block">
+            <h2>Songs (Album Version)</h2>
+            <p class="section-description">
+                Static album playlist used as the traditional album format.
+            </p>
+
+            <table class="grid-table" id="section1-table">
+                <thead>
+                <tr>
+                    <th style="width:60px;">Song #</th>
+                    <th class="col-title">Title (Album Version)</th>
+                    <th class="col-upload">Upload Album File</th>
+                    <th class="col-preview">Preview</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- 1–9 -->
+                <tr>
+                    <td class="number-cell">1</td>
+                    <td><input type="text" name="albumTitle1" /></td>
+                    <td><input type="file" name="albumFile1" accept="audio/*" /></td>
+                    <td><audio class="song-audio section1-audio preview-audio" controls controlslist="nodownload noplaybackrate"></audio></td>
+                </tr>
+                <tr>
+                    <td class="number-cell">2</td>
+                    <td><input type="text" name="albumTitle2" /></td>
+                    <td><input type="file" name="albumFile2" accept="audio/*" /></td>
+                    <td><audio class="song-audio section1-audio preview-audio" controls controlslist="nodownload noplaybackrate"></audio></td>
+                </tr>
+                <tr>
+                    <td class="number-cell">3</td>
+                    <td><input type="text" name="albumTitle3" /></td>
+                    <td><input type="file" name="albumFile3" accept="audio/*" /></td>
+                    <td><audio class="song-audio section1-audio preview-audio" controls controlslist="nodownload noplaybackrate"></audio></td>
+                </tr>
+                <tr>
+                    <td class="number-cell">4</td>
+                    <td><input type="text" name="albumTitle4" /></td>
+                    <td><input type="file" name="albumFile4" accept="audio/*" /></td>
+                    <td><audio class="song-audio section1-audio preview-audio" controls controlslist="nodownload noplaybackrate"></audio></td>
+                </tr>
+                <tr>
+                    <td class="number-cell">5</td>
+                    <td><input type="text" name="albumTitle5" /></td>
+                    <td><input type="file" name="albumFile5" accept="audio/*" /></td>
+                    <td><audio class="song-audio section1-audio preview-audio" controls controlslist="nodownload noplaybackrate"></audio></td>
+                </tr>
+                <tr>
+                    <td class="number-cell">6</td>
+                    <td><input type="text" name="albumTitle6" /></td>
+                    <td><input type="file" name="albumFile6" accept="audio/*" /></td>
+                    <td><audio class="song-audio section1-audio preview-audio" controls controlslist="nodownload noplaybackrate"></audio></td>
+                </tr>
+                <tr>
+                    <td class="number-cell">7</td>
+                    <td><input type="text" name="albumTitle7" /></td>
+                    <td><input type="file" name="albumFile7" accept="audio/*" /></td>
+                    <td><audio class="song-audio section1-audio preview-audio" controls controlslist="nodownload noplaybackrate"></audio></td>
+                </tr>
+                <tr>
+                    <td class="number-cell">8</td>
+                    <td><input type="text" name="albumTitle8" /></td>
+                    <td><input type="file" name="albumFile8" accept="audio/*" /></td>
+                    <td><audio class="song-audio section1-audio preview-audio" controls controlslist="nodownload noplaybackrate"></audio></td>
+                </tr>
+                <tr>
+                    <td class="number-cell">9</td>
+                    <td><input type="text" name="albumTitle9" /></td>
+                    <td><input type="file" name="albumFile9" accept="audio/*" /></td>
+                    <td><audio class="song-audio section1-audio preview-audio" controls controlslist="nodownload noplaybackrate"></audio></td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="section-lock-bar">
+                <span class="lock-status-label">
+                    Status: <span class="lock-status-text">Unlocked</span>
+                </span>
+                <button type="button"
+                        class="lock-toggle-btn unlocked"
+                        data-locked="false">
+                    🔓 Unlock
+                </button>
+            </div>
+        </section>
+
+        <!-- SECTION 2 -->
+        <section class="section-block" data-section-id="section2" id="section2-block">
+            <h2>Song Files for Bridge (Transition Version)</h2>
+            <p class="section-description">
+                Transition song files used for adaptive playback and NFT mix album.
+            </p>
+
+            <table class="grid-table" id="section2-table">
+                <thead>
+                <tr>
+                    <th style="width:60px;">Song #</th>
+                    <th class="col-title">Title (Transition Version)</th>
+                    <th class="col-upload">Upload Transition File</th>
+                    <th class="col-preview">Preview</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- 1–9 -->
+                <tr>
+                    <td class="number-cell">1</td>
+                    <td><input type="text" name="transitionTitle1" /></td>
+                    <td><input type="file" name="transitionFile1" accept="audio/*" /></td>
+                    <td><audio class="song-audio section2-audio preview-audio" controls controlslist="nodownload noplaybackrate"></audio></td>
+                </tr>
+                <tr>
+                    <td class="number-cell">2</td>
+                    <td><input type="text" name="transitionTitle2" /></td>
+                    <td><input type="file" name="transitionFile2" accept="audio/*" /></td>
+                    <td><audio class="song-audio section2-audio preview-audio" controls controlslist="nodownload noplaybackrate"></audio></td>
+                </tr>
+                <tr>
+                    <td class="number-cell">3</td>
+                    <td><input type="text" name="transitionTitle3" /></td>
+                    <td><input type="file" name="transitionFile3" accept="audio/*" /></td>
+                    <td><audio class="song-audio section2-audio preview-audio" controls controlslist="nodownload noplaybackrate"></audio></td>
+                </tr>
+                <tr>
+                    <td class="number-cell">4</td>
+                    <td><input type="text" name="transitionTitle4" /></td>
+                    <td><input type="file" name="transitionFile4" accept="audio/*" /></td>
+                    <td><audio class="song-audio section2-audio preview-audio" controls controlslist="nodownload noplaybackrate"></audio></td>
+                </tr>
+                <tr>
+                    <td class="number-cell">5</td>
+                    <td><input type="text" name="transitionTitle5" /></td>
+                    <td><input type="file" name="transitionFile5" accept="audio/*" /></td>
+                    <td><audio class="song-audio section2-audio preview-audio" controls controlslist="nodownload noplaybackrate"></audio></td>
+                </tr>
+                <tr>
+                    <td class="number-cell">6</td>
+                    <td><input type="text" name="transitionTitle6" /></td>
+                    <td><input type="file" name="transitionFile6" accept="audio/*" /></td>
+                    <td><audio class="song-audio section2-audio preview-audio" controls controlslist="nodownload noplaybackrate"></audio></td>
+                </tr>
+                <tr>
+                    <td class="number-cell">7</td>
+                    <td><input type="text" name="transitionTitle7" /></td>
+                    <td><input type="file" name="transitionFile7" accept="audio/*" /></td>
+                    <td><audio class="song-audio section2-audio preview-audio" controls controlslist="nodownload noplaybackrate"></audio></td>
+                </tr>
+                <tr>
+                    <td class="number-cell">8</td>
+                    <td><input type="text" name="transitionTitle8" /></td>
+                    <td><input type="file" name="transitionFile8" accept="audio/*" /></td>
+                    <td><audio class="song-audio section2-audio preview-audio" controls controlslist="nodownload noplaybackrate"></audio></td>
+                </tr>
+                <tr>
+                    <td class="number-cell">9</td>
+                    <td><input type="text" name="transitionTitle9" /></td>
+                    <td><input type="file" name="transitionFile9" accept="audio/*" /></td>
+                    <td><audio class="song-audio section2-audio preview-audio" controls controlslist="nodownload noplaybackrate"></audio></td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="section-lock-bar">
+                <span class="lock-status-label">
+                    Status: <span class="lock-status-text">Unlocked</span>
+                </span>
+                <button type="button"
+                        class="lock-toggle-btn unlocked"
+                        data-locked="false">
+                    🔓 Unlock
+                </button>
+            </div>
+        </section>
+
+        <!-- SECOND PLAYER ABOVE SECTION 3 -->
+        <section class="player-card">
+            <div class="player-main">
+                <div class="player-title">Album Player</div>
+
+                <div class="player-track">
+                    <span class="meta-label">Now playing:</span>
+                    <span class="meta-value" id="nowPlaying2">No track</span>
+                </div>
+
+                <div class="player-controls">
+                    <button type="button" id="playBtn2" class="btn btn-primary">▶ Play</button>
+                    <button type="button" id="pauseBtn2" class="btn btn-secondary">⏸ Pause</button>
+                    <button type="button" id="stopBtn2" class="btn btn-secondary">■ Stop</button>
+                    <button type="button" id="albumVersionBtn2" class="btn btn-secondary">
+                        Album version
+                    </button>
+                    <button type="button" id="bridgeBtn2" class="btn btn-secondary">
+                        Bridge
+                    </button>
+                    <button type="button" id="albumBridgeBtn2" class="btn btn-secondary">
+                        NFT mix album
+                    </button>
+                </div>
+            </div>
+
+            <div class="player-meta">
+                <div class="meta-row">
+                    <span class="meta-label">Sequence:</span>
+                    <span class="meta-value" id="sequenceLabel2">Idle</span>
+                </div>
+                <div class="progress-bar" id="mainProgressBar2">
+                    <div class="progress-fill" id="progressFill2"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3 -->
+        <section class="section-block" data-section-id="section3" id="section3-block">
+            <h2>Bridges – Default Album Mix (Song Files)</h2>
+            <p class="section-description">
+                Bridge files that sit between transition songs from Section 2.
+            </p>
+
+            <table class="grid-table" id="section3-table">
+                <thead>
+                <tr>
+                    <th style="width:70px;">From Song #</th>
+                    <th style="width:70px;">To Song #</th>
+                    <th class="col-title">Bridge Title</th>
+                    <th class="col-upload">Upload Bridge File</th>
+                    <th class="col-preview">Bridge Timeline</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- 1–9 -->
+                <tr>
+                    <td class="number-cell">1</td>
+                    <td class="number-cell">2</td>
+                    <td><input type="text" name="bridgeTitle1" /></td>
+                    <td><input type="file" name="bridgeFile1" accept="audio/*" /></td>
+                    <td>
+                        <audio class="song-audio bridge-audio preview-audio" controls controlslist="nodownload noplaybackrate"></audio>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="number-cell">2</td>
+                    <td class="number-cell">3</td>
+                    <td><input type="text" name="bridgeTitle2" /></td>
+                    <td><input type="file" name="bridgeFile2" accept="audio/*" /></td>
+                    <td>
+                        <audio class="song-audio bridge-audio preview-audio" controls controlslist="nodownload noplaybackrate"></audio>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="number-cell">3</td>
+                    <td class="number-cell">4</td>
+                    <td><input type="text" name="bridgeTitle3" /></td>
+                    <td><input type="file" name="bridgeFile3" accept="audio/*" /></td>
+                    <td>
+                        <audio class="song-audio bridge-audio preview-audio" controls controlslist="nodownload noplaybackrate"></audio>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="number-cell">4</td>
+                    <td class="number-cell">5</td>
+                    <td><input type="text" name="bridgeTitle4" /></td>
+                    <td><input type="file" name="bridgeFile4" accept="audio/*" /></td>
+                    <td>
+                        <audio class="song-audio bridge-audio preview-audio" controls controlslist="nodownload noplaybackrate"></audio>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="number-cell">5</td>
+                    <td class="number-cell">6</td>
+                    <td><input type="text" name="bridgeTitle5" /></td>
+                    <td><input type="file" name="bridgeFile5" accept="audio/*" /></td>
+                    <td>
+                        <audio class="song-audio bridge-audio preview-audio" controls controlslist="nodownload noplaybackrate"></audio>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="number-cell">6</td>
+                    <td class="number-cell">7</td>
+                    <td><input type="text" name="bridgeTitle6" /></td>
+                    <td><input type="file" name="bridgeFile6" accept="audio/*" /></td>
+                    <td>
+                        <audio class="song-audio bridge-audio preview-audio" controls controlslist="nodownload noplaybackrate"></audio>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="number-cell">7</td>
+                    <td class="number-cell">8</td>
+                    <td><input type="text" name="bridgeTitle7" /></td>
+                    <td><input type="file" name="bridgeFile7" accept="audio/*" /></td>
+                    <td>
+                        <audio class="song-audio bridge-audio preview-audio" controls controlslist="nodownload noplaybackrate"></audio>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="number-cell">8</td>
+                    <td class="number-cell">9</td>
+                    <td><input type="text" name="bridgeTitle8" /></td>
+                    <td><input type="file" name="bridgeFile8" accept="audio/*" /></td>
+                    <td>
+                        <audio class="song-audio bridge-audio preview-audio" controls controlslist="nodownload noplaybackrate"></audio>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="number-cell">9</td>
+                    <td class="number-cell">—</td>
+                    <td><input type="text" name="bridgeTitle9" /></td>
+                    <td><input type="file" name="bridgeFile9" accept="audio/*" /></td>
+                    <td>
+                        <audio class="song-audio bridge-audio preview-audio" controls controlslist="nodownload noplaybackrate"></audio>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="section-lock-bar">
+                <span class="lock-status-label">
+                    Status: <span class="lock-status-text">Unlocked</span>
+                </span>
+                <button type="button"
+                        class="lock-toggle-btn unlocked"
+                        data-locked="false">
+                    🔓 Unlock
+                </button>
+            </div>
+        </section>
+
+        <input type="hidden" name="lockStates" id="lockStatesInput" value="" />
+
+        <div class="master-actions">
+            <div class="master-info">
+                <div>Master controls</div>
+                <div class="master-warning" id="lockWarning">
+                    All three sections must be locked before saving.
+                </div>
+            </div>
+            <button type="button" id="saveBtn" class="btn btn-primary" disabled>
+                Save Entire Worksheet
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+(function () {
+    const STORAGE_KEY = "albumWorksheetLockStates";
+
+    const nowPlaying = document.getElementById("nowPlaying");
+    const nowPlaying2 = document.getElementById("nowPlaying2");
+    const sequenceLabel = document.getElementById("sequenceLabel");
+    const sequenceLabel2 = document.getElementById("sequenceLabel2");
+    const progressFill = document.getElementById("progressFill");
+    const progressFill2 = document.getElementById("progressFill2");
+    const mainProgressBar = document.getElementById("mainProgressBar");
+    const mainProgressBar2 = document.getElementById("mainProgressBar2");
+
+    const playBtn = document.getElementById("playBtn");
+    const pauseBtn = document.getElementById("pauseBtn");
+    const stopBtn = document.getElementById("stopBtn");
+    const albumVersionBtn = document.getElementById("albumVersionBtn");
+    const bridgeBtn = document.getElementById("bridgeBtn");
+    const albumBridgeBtn = document.getElementById("albumBridgeBtn");
+
+    const playBtn2 = document.getElementById("playBtn2");
+    const pauseBtn2 = document.getElementById("pauseBtn2");
+    const stopBtn2 = document.getElementById("stopBtn2");
+    const albumVersionBtn2 = document.getElementById("albumVersionBtn2");
+    const bridgeBtn2 = document.getElementById("bridgeBtn2");
+    const albumBridgeBtn2 = document.getElementById("albumBridgeBtn2");
+
+    const previewAudios = document.querySelectorAll('.song-audio.preview-audio');
+
+    function setNowPlaying(text) {
+        if (nowPlaying) nowPlaying.textContent = text;
+        if (nowPlaying2) nowPlaying2.textContent = text;
+    }
+
+    function setSequenceLabel(text) {
+        if (sequenceLabel) sequenceLabel.textContent = text;
+        if (sequenceLabel2) sequenceLabel2.textContent = text;
+    }
+
+    function setProgressFraction(fraction) {
+        const pct = Math.max(0, Math.min(100, fraction * 100));
+        if (progressFill) progressFill.style.width = pct + "%";
+        if (progressFill2) progressFill2.style.width = pct + "%";
+    }
+
+    /* Wire file inputs → row audio */
+    function wireFileInputsToAudio(selector) {
+        const inputs = document.querySelectorAll(selector);
+        inputs.forEach(input => {
+            input.addEventListener('change', () => {
+                const file = input.files && input.files[0];
+                if (!file) return;
+                const row = input.closest('tr');
+                const audio = row ? row.querySelector('.song-audio') : null;
+                if (!audio) return;
+
+                const url = URL.createObjectURL(file);
+                audio.src = url;
+                audio.load();
+            });
+        });
+    }
+
+    wireFileInputsToAudio('input[name^="albumFile"]');
+    wireFileInputsToAudio('input[name^="transitionFile"]');
+    wireFileInputsToAudio('input[name^="bridgeFile"]');
+
+    function pauseAllExcept(target) {
+        const allAudios = document.querySelectorAll('audio');
+        allAudios.forEach(a => {
+            if (a !== target) {
+                a.pause();
+                a.currentTime = 0;
+            }
+        });
+    }
+
+    let isSequenceActive = false;
+    let sequenceMode = "idle"; // "idle" | "album" | "bridge" | "albumBridge"
+    let sequenceItems = [];    // [{ audio, label }]
+    let sequenceIndex = -1;
+    let currentAudio = null;
+    let programmaticPlay = false;
+
+    function getSection1Audios() {
+        return Array.from(document.querySelectorAll(".section1-audio"));
+    }
+
+    function getSection2Audios() {
+        return Array.from(document.querySelectorAll(".section2-audio"));
+    }
+
+    function getSection3BridgeAudios() {
+        return Array.from(document.querySelectorAll(".bridge-audio"));
+    }
+
+    function stopAllAudios() {
+        const all = document.querySelectorAll("audio");
+        all.forEach(a => {
+            a.pause();
+            a.currentTime = 0;
+        });
+    }
+
+    function modeText() {
+        switch (sequenceMode) {
+            case "album": return "Album version";
+            case "bridge": return "Bridge version";
+            case "albumBridge": return "NFT mix album";
+            default: return "Idle";
+        }
+    }
+
+    function finishSequence() {
+        isSequenceActive = false;
+        sequenceMode = "idle";
+        sequenceItems = [];
+        sequenceIndex = -1;
+        currentAudio = null;
+        setSequenceLabel("Finished");
+        setProgressFraction(1);
+    }
+
+    function hookAudioProgress(audio) {
+        if (!audio) return;
+        audio.ontimeupdate = () => {
+            if (!audio.duration || audio.duration === Infinity) return;
+            const frac = audio.currentTime / audio.duration;
+            setProgressFraction(frac);
+        };
+    }
+
+    function playSequenceIndex(i) {
+        if (!sequenceItems.length || i < 0 || i >= sequenceItems.length) {
+            finishSequence();
+            return;
+        }
+
+        sequenceIndex = i;
+        const item = sequenceItems[i];
+        const audio = item.audio;
+        if (!audio || !audio.src) {
+            playSequenceIndex(i + 1);
+            return;
+        }
+
+        currentAudio = audio;
+        pauseAllExcept(currentAudio);
+
+        currentAudio.onended = null;
+        currentAudio.ontimeupdate = null;
+        hookAudioProgress(currentAudio);
+
+        const label = item.label || ("Track " + (i + 1));
+        const mt = modeText();
+
+        setNowPlaying(mt + " – " + label);
+        setSequenceLabel(mt + " – Step " + (i + 1) + " of " + sequenceItems.length);
+
+        currentAudio.onended = () => {
+            if (!isSequenceActive) return;
+            playSequenceIndex(sequenceIndex + 1);
+        };
+
+        programmaticPlay = true;
+        currentAudio.play().then(() => {
+            programmaticPlay = false;
+        }).catch(() => {
+            programmaticPlay = false;
+        });
+    }
+
+    function startSequence(mode, items) {
+        const valid = (items || []).filter(it => it.audio && it.audio.src);
+        if (!valid.length) {
+            let msg = "No audio files found for this sequence.";
+            if (mode === "album") msg = "Please upload at least one album file in Section 1.";
+            if (mode === "bridge") msg = "Please upload at least one transition file in Section 2.";
+            if (mode === "albumBridge") msg = "Please upload transition and/or bridge files in Sections 2 and 3.";
+            alert(msg);
+            return;
+        }
+
+        stopAllAudios();
+        isSequenceActive = true;
+        sequenceMode = mode;
+        sequenceItems = valid;
+        sequenceIndex = 0;
+        setProgressFraction(0);
+        playSequenceIndex(0);
+    }
+
+    /* BUILD SEQUENCES */
+
+    function buildAlbumSequence() {
+        const audios = getSection1Audios();
+        return audios.map((a, idx) => ({
+            audio: a,
+            label: "Song " + (idx + 1)
+        }));
+    }
+
+    function buildBridgeSequence() {
+        const audios = getSection2Audios();
+        return audios.map((a, idx) => ({
+            audio: a,
+            label: "Transition Song " + (idx + 1)
+        }));
+    }
+
+    function buildAlbumBridgeSequence() {
+        const songs = getSection2Audios();
+        const bridges = getSection3BridgeAudios();
+        const items = [];
+
+        const maxLen = Math.max(songs.length, bridges.length);
+        for (let i = 0; i < maxLen; i++) {
+            const song = songs[i];
+            const bridge = bridges[i];
+            if (song && song.src) {
+                items.push({
+                    audio: song,
+                    label: "Transition Song " + (i + 1)
+                });
+            }
+            if (bridge && bridge.src) {
+                const toNum = i + 2;
+                const toLabel = (toNum <= songs.length) ? toNum : "End";
+                items.push({
+                    audio: bridge,
+                    label: "Bridge " + (i + 1) + " → " + toLabel
+                });
+            }
+        }
+        return items;
+    }
+
+    /* TOP PLAYER BUTTONS (both players control the same logic) */
+
+    function wireMainControls(playEl, pauseEl, stopEl, albumEl, bridgeEl, albumBridgeEl) {
+        if (playEl) {
+            playEl.addEventListener("click", () => {
+                startSequence("album", buildAlbumSequence());
+            });
+        }
+        if (albumEl) {
+            albumEl.addEventListener("click", () => {
+                startSequence("album", buildAlbumSequence());
+            });
+        }
+        if (bridgeEl) {
+            bridgeEl.addEventListener("click", () => {
+                startSequence("bridge", buildBridgeSequence());
+            });
+        }
+        if (albumBridgeEl) {
+            albumBridgeEl.addEventListener("click", () => {
+                startSequence("albumBridge", buildAlbumBridgeSequence());
+            });
+        }
+        if (pauseEl) {
+            pauseEl.addEventListener("click", () => {
+                if (currentAudio) currentAudio.pause();
+            });
+        }
+        if (stopEl) {
+            stopEl.addEventListener("click", () => {
+                isSequenceActive = false;
+                sequenceMode = "idle";
+                sequenceItems = [];
+                sequenceIndex = -1;
+                stopAllAudios();
+                currentAudio = null;
+                setNowPlaying("No track");
+                setSequenceLabel("Idle");
+                setProgressFraction(0);
+            });
+        }
+    }
+
+    wireMainControls(playBtn,  pauseBtn,  stopBtn,  albumVersionBtn,  bridgeBtn,  albumBridgeBtn);
+    wireMainControls(playBtn2, pauseBtn2, stopBtn2, albumVersionBtn2, bridgeBtn2, albumBridgeBtn2);
+
+    /* SIMPLE PREVIEW (local timelines) */
+    previewAudios.forEach(audio => {
+        audio.addEventListener("play", () => {
+            if (programmaticPlay) {
+                programmaticPlay = false;
+                return;
+            }
+
+            // User manually clicked a local audio control → isolated preview
+            isSequenceActive = false;
+            sequenceMode = "idle";
+            sequenceItems = [];
+            sequenceIndex = -1;
+
+            pauseAllExcept(audio);
+            currentAudio = audio;
+            hookAudioProgress(audio);
+
+            const row = audio.closest("tr");
+            const numberCell = row ? row.querySelector(".number-cell") : null;
+            const trackNumber = numberCell ? numberCell.textContent.trim() : "?";
+
+            setNowPlaying("Preview – Track " + trackNumber);
+            setSequenceLabel("Preview control");
+        });
+    });
+
+    /* MAIN PROGRESS BAR SEEK (both bars) */
+    function wireProgressBarSeek(bar) {
+        if (!bar) return;
+        let dragging = false;
+
+        function seek(e) {
+            if (!currentAudio || !currentAudio.duration || currentAudio.duration === Infinity) return;
+            const rect = bar.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const frac = Math.max(0, Math.min(1, x / rect.width));
+            currentAudio.currentTime = frac * currentAudio.duration;
+            setProgressFraction(frac);
+        }
+
+        bar.addEventListener("mousedown", (e) => {
+            dragging = true;
+            seek(e);
+        });
+
+        window.addEventListener("mousemove", (e) => {
+            if (!dragging) return;
+            seek(e);
+        });
+
+        window.addEventListener("mouseup", () => {
+            dragging = false;
+        });
+
+        bar.addEventListener("click", (e) => {
+            seek(e);
+        });
+    }
+
+    wireProgressBarSeek(mainProgressBar);
+    wireProgressBarSeek(mainProgressBar2);
+
+    /* LOCKS + MASTER SAVE */
+    const lockButtons = document.querySelectorAll(".lock-toggle-btn");
+    const saveBtn = document.getElementById("saveBtn");
+    const lockWarning = document.getElementById("lockWarning");
+    const lockStatesInput = document.getElementById("lockStatesInput");
+    const form = document.getElementById("worksheetForm");
+
+    function getLockStateObj() {
+        const locks = Array.from(lockButtons).map(
+            btn => btn.getAttribute("data-locked") === "true"
+        );
+        return {
+            section1: locks[0] || false,
+            section2: locks[1] || false,
+            section3: locks[2] || false
+        };
+    }
+
+    function updateLockStatesHiddenField() {
+        const obj = getLockStateObj();
+        if (lockStatesInput) {
+            lockStatesInput.value = JSON.stringify(obj);
+        }
+        return obj;
+    }
+
+    function persistLockStates(obj) {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(obj));
+        } catch (e) {}
+    }
+
+    function applyLockStateToUI(obj) {
+        const sections = ["section1", "section2", "section3"];
+        sections.forEach((key, index) => {
+            const locked = !!obj[key];
+            const btn = lockButtons[index];
+            if (!btn) return;
+            const block = btn.closest(".section-block");
+            const statusText = block ? block.querySelector(".lock-status-text") : null;
+
+            btn.setAttribute("data-locked", locked ? "true" : "false");
+
+            if (locked) {
+                btn.classList.remove("unlocked");
+                btn.classList.add("locked");
+                btn.textContent = "🔒 Locked";
+                if (statusText) statusText.textContent = "Locked";
+            } else {
+                btn.classList.remove("locked");
+                btn.classList.add("unlocked");
+                btn.textContent = "🔓 Unlock";
+                if (statusText) statusText.textContent = "Unlocked";
+            }
+
+            if (block) {
+                const fileInputs = block.querySelectorAll('input[type="file"]');
+                fileInputs.forEach(input => {
+                    input.disabled = locked;
+                });
+            }
+        });
+    }
+
+    function updateMasterSave() {
+        const obj = updateLockStatesHiddenField();
+        const locks = Object.values(obj);
+        const allLocked = locks.length > 0 && locks.every(Boolean);
+        saveBtn.disabled = !allLocked;
+        lockWarning.style.visibility = allLocked ? "hidden" : "visible";
+        persistLockStates(obj);
+    }
+
+    // restore lock state from localStorage
+    (function restoreLockStatesOnLoad() {
+        try {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                const obj = JSON.parse(stored);
+                applyLockStateToUI(obj);
+            }
+        } catch (e) {}
+    })();
+
+    lockButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+            const isLocked = btn.getAttribute("data-locked") === "true";
+            const newLocked = !isLocked;
+            const block = btn.closest(".section-block");
+            const statusText = block ? block.querySelector(".lock-status-text") : null;
+
+            btn.setAttribute("data-locked", newLocked ? "true" : "false");
+
+            if (newLocked) {
+                btn.classList.remove("unlocked");
+                btn.classList.add("locked");
+                btn.textContent = "🔒 Locked";
+                if (statusText) statusText.textContent = "Locked";
+            } else {
+                btn.classList.remove("locked");
+                btn.classList.add("unlocked");
+                btn.textContent = "🔓 Unlock";
+                if (statusText) statusText.textContent = "Unlocked";
+            }
+
+            if (block) {
+                const fileInputs = block.querySelectorAll('input[type="file"]');
+                fileInputs.forEach(input => {
+                    input.disabled = newLocked;
+                });
+            }
+
+            updateMasterSave();
+        });
+    });
+
+    saveBtn.addEventListener("click", () => {
+        if (saveBtn.disabled) return;
+        form.submit();
+    });
+
+    updateMasterSave();
+})();
+</script>
+
+</body>
+</html>
+

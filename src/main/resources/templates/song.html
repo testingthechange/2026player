@@ -1,184 +1,334 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Song Page - Block Radius</title>
-    <meta charset="UTF-8"/>
+    <meta charset="UTF-8">
+    <title>Song Transition Bridges</title>
     <style>
+        :root {
+            --bg: #ffffff;
+            --card: #ffffff;
+            --border-subtle: #e0e0e0;
+            --accent: #ff3b6a;
+            --accent-soft: rgba(255, 59, 106, 0.12);
+            --text-main: #111111;
+            --text-sub: #666666;
+        }
+        * {
+            box-sizing: border-box;
+        }
         body {
-            font-family: sans-serif;
             margin: 0;
-            padding: 0;
-            background: #ffffff;
-            color: #222222;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            min-height: 100vh;
         }
         header {
-            background: #f5f5f5;
-            color: #222;
-            padding: 10px 20px;
-            display: flex;
+            padding: 20px 32px 8px;
+        }
+        header h1 {
+            margin: 8px 0 4px;
+            font-size: 22px;
+        }
+        header p {
+            margin: 0;
+            font-size: 13px;
+            color: var(--text-sub);
+        }
+        .pill {
+            display: inline-flex;
             align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid #dddddd;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            background: #f3f3f7;
+            border: 1px solid #e5e5f0;
+            color: var(--text-sub);
         }
-        header .title {
-            font-weight: bold;
-        }
-        header a {
-            color: #0073e6;
-            margin-left: 15px;
-            text-decoration: none;
-            font-size: 0.9rem;
-        }
-        header a:hover {
-            text-decoration: underline;
+        .pill span.dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 999px;
+            background: #2ecc71;
         }
         main {
-            padding: 20px;
-            max-width: 960px;
-            margin: 0 auto;
-        }
-        h1 {
-            margin-top: 0;
+            max-width: 1080px;
+            margin: 0 auto 40px;
+            padding: 0 24px 40px;
         }
         .card {
-            background: #ffffff;
-            border-radius: 8px;
-            padding: 16px;
-            margin-bottom: 20px;
-            border: 1px solid #e0e0e0;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            background: var(--card);
+            border-radius: 14px;
+            padding: 18px 20px 18px;
+            border: 1px solid var(--border-subtle);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         }
-        .context {
-            font-size: 0.9rem;
-            color: #555555;
+        .card h2 {
+            font-size: 16px;
+            margin: 0 0 4px;
+        }
+        .card p.sub {
+            font-size: 12px;
+            color: var(--text-sub);
+            margin: 0 0 16px;
+        }
+        .field-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 16px;
+            align-items: center;
             margin-bottom: 12px;
         }
-        .song-header {
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 140px;
+        }
+        label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: var(--text-sub);
+        }
+        select, input[type="text"], input[type="number"] {
+            background: #fafafa;
+            border-radius: 999px;
+            border: 1px solid #d3d3e0;
+            color: var(--text-main);
+            padding: 6px 10px;
+            font-size: 13px;
+            outline: none;
+        }
+        select:focus, input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 1px var(--accent-soft);
+            background: #ffffff;
+        }
+        hr {
+            border: none;
+            border-top: 1px solid #e5e5e5;
+            margin: 14px 0 12px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        thead {
+            background: #fafafa;
+        }
+        th, td {
+            padding: 8px 6px;
+            border-bottom: 1px solid #eeeeee;
+            vertical-align: middle;
+        }
+        th {
+            text-align: left;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            color: var(--text-sub);
+        }
+        tr:nth-child(even) td {
+            background: #fbfbfb;
+        }
+        .audio-well {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .audio-well input[type="file"] {
+            font-size: 11px;
+        }
+        audio {
+            width: 100%;
+            outline: none;
+        }
+        .time-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-sub);
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            border-radius: 999px;
+            padding: 8px 16px;
+            font-size: 13px;
+            border: none;
+            cursor: pointer;
+            background: var(--accent);
+            color: #ffffff;
+        }
+        .btn-primary:hover {
+            filter: brightness(1.03);
+        }
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            border-radius: 999px;
+            padding: 8px 16px;
+            font-size: 13px;
+            border: 1px solid #d3d3e0;
+            cursor: pointer;
+            background: #ffffff;
+            color: var(--text-sub);
+        }
+        .card-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-        }
-        .song-header h1 {
-            margin: 0 0 8px 0;
-        }
-        .dummy-player {
-            margin-top: 12px;
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #dddddd;
-            background: #fafafa;
-            font-size: 0.9rem;
-        }
-        label {
-            display: inline-block;
-            width: 120px;
-            font-size: 0.9rem;
-            color: #333333;
-        }
-        input[type="text"] {
-            width: 100%;
-            max-width: 400px;
-            margin-bottom: 6px;
-            padding: 6px 8px;
-            border-radius: 4px;
-            border: 1px solid #cccccc;
-            font-size: 0.9rem;
-        }
-        input[type="text"]:focus {
-            outline: none;
-            border-color: #0073e6;
-            box-shadow: 0 0 0 1px rgba(0,115,230,0.2);
-        }
-        button {
-            cursor: pointer;
-            margin-top: 10px;
-            padding: 6px 12px;
-            border-radius: 4px;
-            border: 1px solid #0073e6;
-            background: #0073e6;
-            color: #ffffff;
-            font-size: 0.9rem;
-        }
-        button:hover {
-            background: #005bb5;
-            border-color: #005bb5;
-        }
-        .actions {
             margin-top: 16px;
-            display: flex;
-            gap: 8px;
+            gap: 16px;
             flex-wrap: wrap;
+        }
+        .helper {
+            font-size: 11px;
+            color: var(--text-sub);
         }
     </style>
 </head>
 <body>
 <header>
-    <div class="title">Block Radius Player - Song Page</div>
-    <nav>
-        <a th:href="@{/player(producerId=${producerId}, projectIndex=${projectIndex})}">Back to Project</a>
-        <a th:href="@{/player/meta(producerId=${producerId}, projectIndex=${projectIndex})}">Project Meta</a>
-    </nav>
+    <div>
+        <div class="pill">
+            <span class="dot"></span>
+            Song Worksheet • Bridges
+        </div>
+        <h1>
+            Song
+            <span th:text="${track}">1</span>
+            Transition Bridges
+        </h1>
+        <p>
+            Define how this song flows into each of the other songs in the project.
+        </p>
+    </div>
 </header>
 
 <main>
-    <div class="card">
-        <div class="song-header">
-            <div>
-                <h1>Song Page (Dummy)</h1>
-                <div class="context" th:if="${producer != null and project != null}">
-                    <p>
-                        <strong>Producer:</strong>
-                        <span th:text="${producer.name}">Producer Name</span><br/>
-                        <strong>Project:</strong>
-                        <span th:text="${project.name}">Project Name</span><br/>
-                        <strong>Track #:</strong>
-                        <span th:text="${track}">1</span>
-                    </p>
-                </div>
-                <div class="context" th:if="${producer == null or project == null}">
-                    <p>Song page is not currently linked to a specific project.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Dummy audio player / waveform placeholder -->
-        <div class="dummy-player">
-            <p><strong>Audio Player (placeholder)</strong></p>
-            <p>This is where the waveform / player UI for this track will go.</p>
-        </div>
-    </div>
-
-    <!-- Inline Meta Section for this Song (Dummy fields) -->
-    <div class="card">
-        <h2>Song Meta (Track <span th:text="${track}">1</span>)</h2>
-        <p class="context">
-            The producer will fill out credits and details here.  
-            Later, when they push the song bridge sheet back, this meta will go
-            into the Masters page and export pipeline.
+    <section class="card">
+        <h2>Song selection</h2>
+        <p class="sub">
+            Choose which song you’re editing. Each track gets its own From → To bridge grid.
         </p>
 
-        <form th:action="@{/player/song/meta}" method="post">
-            <!-- Keep context so we can round-trip back to the same song -->
-            <input type="hidden" name="producerId" th:value="${producerId}"/>
-            <input type="hidden" name="projectIndex" th:value="${projectIndex}"/>
-            <input type="hidden" name="track" th:value="${track}"/>
+        <form th:action="@{/player/song}" method="get" class="field-row">
+            <input type="hidden" name="producerId" th:value="${producerId}">
+            <input type="hidden" name="projectIndex" th:value="${projectIndex}">
 
-            <label>Song Title:</label><input type="text" name="song_title"/><br/>
-            <label>Songwriter:</label><input type="text" name="song_writer"/><br/>
-            <label>Producer:</label><input type="text" name="song_producer"/><br/>
-            <label>Engineer:</label><input type="text" name="song_engineer"/><br/>
-            <label>BPM:</label><input type="text" name="song_bpm"/><br/>
-            <label>Genre:</label><input type="text" name="song_genre"/><br/>
+            <div class="field-group">
+                <label for="trackSelect">Song #</label>
+                <select id="trackSelect" name="track">
+                    <option th:each="n : ${#numbers.sequence(1,9)}"
+                            th:value="${n}"
+                            th:selected="${n} == ${track}"
+                            th:text="${n}">
+                        1
+                    </option>
+                </select>
+            </div>
 
-            <div class="actions">
-                <button type="submit">Save Song Meta (dummy)</button>
+            <button type="submit" class="btn-secondary">
+                Load worksheet
+            </button>
+        </form>
 
-                <!-- Future: this will push song + meta back into Masters -->
-                <button type="submit">Push Song # to Block Radius (dummy)</button>
+        <hr>
+
+        <h2>Song-to-song transitions</h2>
+        <p class="sub">
+            For current song <strong th:text="${track}">1</strong>, upload bridge MP3s that lead into the other songs.
+            Each row is one transition (From this song → To another song).
+        </p>
+
+        <form th:action="@{/player/song/bridges}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="producerId" th:value="${producerId}">
+            <input type="hidden" name="projectIndex" th:value="${projectIndex}">
+            <input type="hidden" name="track" th:value="${track}">
+
+            <table>
+                <thead>
+                <tr>
+                    <th style="width: 70px;">Row</th>
+                    <th style="width: 110px;">From</th>
+                    <th style="width: 110px;">To</th>
+                    <th>Bridge upload &amp; preview</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="to : ${#numbers.sequence(1,9)}"
+                    th:if="${to} != ${track}">
+                    <td th:text="${to}">2</td>
+                    <td>
+                        <span th:text="${track}">1</span>
+                    </td>
+                    <td>
+                        <span th:text="${to}">2</span>
+                    </td>
+                    <td>
+                        <div class="audio-well">
+                            <input type="file"
+                                   th:name="'bridge_' + ${track} + '_to_' + ${to}"
+                                   accept="audio/mpeg,audio/mp3,audio/wav">
+                            <!-- Audio preview -->
+                            <audio controls controlsList="nodownload noplaybackrate"></audio>
+                            <div class="time-meta">
+                                <span>Choose the bridge MP3 for this transition.</span>
+                                <span>
+                                    From <strong th:text="${track}">1</strong>
+                                    →
+                                    <strong th:text="${to}">2</strong>
+                                </span>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="card-footer">
+                <button type="submit" class="btn-primary">
+                    Save bridges (dummy for now)
+                </button>
+                <div class="helper">
+                    Files are preview-only in the browser. Later, Master Save will push approved bridges into the producer’s Masters.
+                </div>
             </div>
         </form>
-    </div>
+    </section>
 </main>
+
+<script>
+// Make uploaded file play in the audio tag in the same row
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.audio-well').forEach(function(well) {
+        const fileInput = well.querySelector('input[type="file"]');
+        const audio = well.querySelector('audio');
+
+        if (!fileInput || !audio) return;
+
+        fileInput.addEventListener('change', function() {
+            if (fileInput.files && fileInput.files[0]) {
+                const url = URL.createObjectURL(fileInput.files[0]);
+                audio.src = url;
+                audio.load();
+                audio.play().catch(function() {
+                    // Autoplay might be blocked; it's fine, user can press play manually.
+                });
+            }
+        });
+    });
+});
+</script>
 </body>
 </html>

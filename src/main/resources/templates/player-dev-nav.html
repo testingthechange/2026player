@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Player Dev Nav</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #0b0b0f;
+            color: #f5f5f5;
+            margin: 0;
+            padding: 40px;
+        }
+        .card {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 24px 28px;
+            background: #15151d;
+            border-radius: 16px;
+            box-shadow: 0 18px 40px rgba(0,0,0,0.45);
+        }
+        h1 {
+            font-size: 22px;
+            margin-top: 0;
+            margin-bottom: 16px;
+        }
+        p.subtitle {
+            font-size: 14px;
+            color: #b3b3c3;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+        ul {
+            list-style: none;
+            padding-left: 0;
+            margin: 0;
+        }
+        li {
+            margin-bottom: 12px;
+        }
+        a {
+            display: inline-block;
+            padding: 10px 14px;
+            border-radius: 999px;
+            text-decoration: none;
+            background: #222233;
+            color: #f5f5f5;
+            font-size: 14px;
+        }
+        a span.path {
+            font-family: "SF Mono", ui-monospace, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        small {
+            display: block;
+            margin-top: 16px;
+            color: #7a7a8f;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>Player Dev Navigation</h1>
+    <p class="subtitle">
+        Use these links while we develop the player side. All use
+        <code>producerId=0</code>, <code>projectIndex=0</code>, <code>track=1</code>.
+    </p>
+    <ul>
+        <li>
+            <a th:href="@{/player/home}">
+                Player Home<br>
+                <span class="path">/player/home</span>
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/player/song(producerId=${producerId}, projectIndex=${projectIndex}, track=${track})}">
+                Song Worksheet (Bridges)<br>
+                <span class="path">/player/song?producerId=0&amp;projectIndex=0&amp;track=1</span>
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/meta(producerId=${producerId}, projectIndex=${projectIndex}, track=${track})}">
+                Meta / Credits Worksheet<br>
+                <span class="path">/meta?producerId=0&amp;projectIndex=0&amp;track=1</span>
+            </a>
+        </li>
+    </ul>
+
+    <small>
+        Later, the Magic Link token will carry the real producer/project/track
+        values. For now this page is just a dev toggle.
+    </small>
+</div>
+</body>
+</html>
