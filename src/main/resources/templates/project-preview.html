@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="'Preview: ' + ${project.name}">Project Preview</title>
+    <meta charset="UTF-8"/>
+    <style>
+        body { font-family: sans-serif; margin: 0; padding: 0; }
+        header { background: #222; color: #fff; padding: 10px 20px; }
+        header a { color: #ddd; margin-right: 15px; text-decoration: none; }
+        header a:hover { text-decoration: underline; }
+        main { padding: 20px; max-width: 900px; margin: 0 auto; }
+        .section { margin-bottom: 20px; }
+        .placeholder-box {
+            border: 1px dashed #aaa;
+            padding: 10px;
+            background: #fafafa;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <span><strong>Block Radius Admin</strong></span>
+    &nbsp;&nbsp;
+    <a th:href="@{/dashboard}">Dashboard</a>
+    <a th:href="@{/producer}">Producer Accounts</a>
+    <a th:href="@{/pending}">Pending Room</a>
+    <a th:href="@{/meta}">Meta</a>
+    <a th:href="@{/export}">SaaS Export</a>
+    <a th:href="@{/accounts}">Admin Accounts</a>
+    <a th:href="@{/logout}">Logout</a>
+</header>
+
+<main>
+    <div class="section">
+        <a th:href="@{'/producer/' + ${producerId}}">&larr; Back to Producer Account</a>
+    </div>
+
+    <div class="section">
+        <h1 th:text="${project.name}">Project Name</h1>
+        <p>
+            <strong>Producer:</strong> <span th:text="${producer.name}">Producer Name</span><br/>
+            <strong>Date:</strong> <span th:text="${project.date}">2025-11-10</span><br/>
+            <strong>Magic Link Sent:</strong>
+            <span th:text="${project.magicLinkSentAt != null ? project.magicLinkSentAt : 'Not sent'}">
+                Not sent
+            </span>
+        </p>
+    </div>
+
+    <div class="section">
+        <h2>Preview: Work In Progress</h2>
+        <div class="placeholder-box">
+            This is a placeholder for previewing the producer's current work
+            before they master save it. Later, this page can load live data
+            (song list, bridge map, rules, etc.) from wherever the Magic Link
+            session writes its work-in-progress state.
+        </div>
+    </div>
+</main>
+</body>
+</html>

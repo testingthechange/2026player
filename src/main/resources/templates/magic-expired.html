@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Magic Link Expired</title>
+    <meta charset="UTF-8"/>
+    <style>
+        body { font-family: sans-serif; margin: 0; padding: 0; background: #1a1a1a; color: #f5f5f5; }
+        header { background: #111; color: #fff; padding: 10px 20px; }
+        header a { color: #ccc; margin-right: 15px; text-decoration: none; }
+        header a:hover { text-decoration: underline; }
+        main { padding: 20px; max-width: 700px; margin: 0 auto; }
+        .card {
+            background: #242424;
+            border-radius: 8px;
+            padding: 16px;
+            border: 1px solid #444;
+        }
+        .expired { color: #ff6666; font-weight: bold; }
+    </style>
+</head>
+<body>
+<header>
+    <span><strong>Block Radius Player</strong></span>
+</header>
+
+<main>
+    <div class="card">
+        <h1 class="expired">Magic Link Expired</h1>
+        <p>
+            This link is no longer valid.
+        </p>
+        <p th:if="${producer != null and project != null}">
+            Producer: <strong th:text="${producer.name}">Producer Name</strong><br/>
+            Project: <strong th:text="${project.name}">Project Name</strong><br/>
+            Expired at: <strong th:text="${expiresAt}">2025-11-12 12:00:00</strong>
+        </p>
+        <p>
+            Please contact your Block Radius admin to request a new Magic Link for this project.
+        </p>
+    </div>
+</main>
+</body>
+</html>

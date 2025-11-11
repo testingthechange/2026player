@@ -1,60 +1,194 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Meta &amp; Assets - Block Radius Admin</title>
+    <title>Meta Data Entry - Block Radius</title>
     <meta charset="UTF-8"/>
     <style>
-        body { font-family: sans-serif; margin: 0; padding: 0; }
-        header { background: #222; color: #fff; padding: 10px 20px; }
-        header a { color: #ddd; margin-right: 15px; text-decoration: none; }
+        body { font-family: sans-serif; margin: 0; padding: 0; background: #050509; color: #f5f5f5; }
+        header { background: #111; color: #fff; padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; }
+        header .title { font-weight: bold; }
+        header a { color: #bbb; margin-left: 15px; text-decoration: none; font-size: 0.9rem; }
         header a:hover { text-decoration: underline; }
-        main { padding: 20px; max-width: 900px; margin: 0 auto; }
-        input[type="text"] { width: 100%; max-width: 700px; }
+        main { padding: 20px; max-width: 960px; margin: 0 auto; }
+        h1 { margin-top: 0; }
+        h2 { margin-top: 24px; margin-bottom: 8px; }
+        .card {
+            background: #161623;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+            border: 1px solid #2a2a3a;
+        }
+        .context {
+            font-size: 0.9rem;
+            color: #ccc;
+            margin-bottom: 16px;
+        }
+        label {
+            display: inline-block;
+            width: 120px;
+            font-size: 0.9rem;
+        }
+        input[type="text"] {
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 6px;
+        }
+        .song-block {
+            margin-top: 12px;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #333;
+            background: #1f1f2b;
+        }
+        .song-title-label {
+            font-weight: bold;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+        }
+        button { cursor: pointer; margin-top: 16px; }
+        .section-title { margin-top: 32px; }
     </style>
 </head>
 <body>
 <header>
-    <span><strong>Block Radius Admin</strong></span>
-    &nbsp;&nbsp;
-    <a th:href="@{/dashboard}">Dashboard</a>
-    <a th:href="@{/producer}">Producer</a>
-    <a th:href="@{/pending}">Pending</a>
-    <a th:href="@{/meta}">Meta</a>
-    <a th:href="@{/export}">Export</a>
-    <a th:href="@{/accounts}">Accounts</a>
-    <a th:href="@{/logout}">Logout</a>
+    <div class="title">Block Radius Player - Meta Data</div>
+    <nav>
+        <a th:href="@{/player(producerId=${producerId}, projectIndex=${projectIndex})}">Back to Player</a>
+    </nav>
 </header>
 
 <main>
-    <h1>Meta &amp; Assets</h1>
-    <p>
-        Shell for uploading artwork, documents and credits. Later we’ll generate
-        a meta.json manifest into the pending room.
-    </p>
+    <div class="card">
+        <h1>Meta Data Entry</h1>
 
-    <form method="post" action="/meta/save" enctype="multipart/form-data">
-        <h3>Credits</h3>
-        <label>Songwriter(s)</label><br/>
-        <input type="text" name="songwriters" placeholder="Name1, Name2"/><br/><br/>
+        <div class="context" th:if="${producer != null and project != null}">
+            <p>
+                <strong>Producer:</strong>
+                <span th:text="${producer.name}">Producer Name</span><br/>
+                <strong>Project:</strong>
+                <span th:text="${project.name}">Project Name</span><br/>
+                <strong>Date:</strong>
+                <span th:text="${project.date}">2025-11-10</span>
+            </p>
+        </div>
 
-        <label>Producer(s)</label><br/>
-        <input type="text" name="producers" placeholder="Name1, Name2"/><br/><br/>
+        <div class="context" th:if="${producer == null or project == null}">
+            <p>This meta page is not currently linked to a specific project.</p>
+        </div>
 
-        <label>Engineer(s)</label><br/>
-        <input type="text" name="engineers" placeholder="Name1, Name2"/><br/><br/>
+        <!-- For now we still POST to /meta/save -->
+        <form method="post" action="/meta/save" enctype="multipart/form-data">
 
-        <h3>Assets</h3>
-        <label>Images</label><br/>
-        <input type="file" name="images" multiple/><br/><br/>
+            <h2 class="section-title">Song Credits (up to 9 songs)</h2>
 
-        <label>Videos</label><br/>
-        <input type="file" name="videos" multiple/><br/><br/>
+            <!-- Song 1 -->
+            <div class="song-block">
+                <div class="song-title-label">Song 1</div>
+                <label>Song Title:</label><input type="text" name="song1_title"/><br/>
+                <label>Songwriter:</label><input type="text" name="song1_songwriter"/><br/>
+                <label>Producer:</label><input type="text" name="song1_producer"/><br/>
+                <label>Engineer:</label><input type="text" name="song1_engineer"/><br/>
+                <label>BPM:</label><input type="text" name="song1_bpm"/><br/>
+                <label>Genre:</label><input type="text" name="song1_genre"/><br/>
+            </div>
 
-        <label>Documents</label><br/>
-        <input type="file" name="documents" multiple/><br/><br/>
+            <!-- Song 2 -->
+            <div class="song-block">
+                <div class="song-title-label">Song 2</div>
+                <label>Song Title:</label><input type="text" name="song2_title"/><br/>
+                <label>Songwriter:</label><input type="text" name="song2_songwriter"/><br/>
+                <label>Producer:</label><input type="text" name="song2_producer"/><br/>
+                <label>Engineer:</label><input type="text" name="song2_engineer"/><br/>
+                <label>BPM:</label><input type="text" name="song2_bpm"/><br/>
+                <label>Genre:</label><input type="text" name="song2_genre"/><br/>
+            </div>
 
-        <button type="submit">Save Meta to Pending Room</button>
-    </form>
+            <!-- Song 3 -->
+            <div class="song-block">
+                <div class="song-title-label">Song 3</div>
+                <label>Song Title:</label><input type="text" name="song3_title"/><br/>
+                <label>Songwriter:</label><input type="text" name="song3_songwriter"/><br/>
+                <label>Producer:</label><input type="text" name="song3_producer"/><br/>
+                <label>Engineer:</label><input type="text" name="song3_engineer"/><br/>
+                <label>BPM:</label><input type="text" name="song3_bpm"/><br/>
+                <label>Genre:</label><input type="text" name="song3_genre"/><br/>
+            </div>
+
+            <!-- Song 4 -->
+            <div class="song-block">
+                <div class="song-title-label">Song 4</div>
+                <label>Song Title:</label><input type="text" name="song4_title"/><br/>
+                <label>Songwriter:</label><input type="text" name="song4_songwriter"/><br/>
+                <label>Producer:</label><input type="text" name="song4_producer"/><br/>
+                <label>Engineer:</label><input type="text" name="song4_engineer"/><br/>
+                <label>BPM:</label><input type="text" name="song4_bpm"/><br/>
+                <label>Genre:</label><input type="text" name="song4_genre"/><br/>
+            </div>
+
+            <!-- Song 5 -->
+            <div class="song-block">
+                <div class="song-title-label">Song 5</div>
+                <label>Song Title:</label><input type="text" name="song5_title"/><br/>
+                <label>Songwriter:</label><input type="text" name="song5_songwriter"/><br/>
+                <label>Producer:</label><input type="text" name="song5_producer"/><br/>
+                <label>Engineer:</label><input type="text" name="song5_engineer"/><br/>
+                <label>BPM:</label><input type="text" name="song5_bpm"/><br/>
+                <label>Genre:</label><input type="text" name="song5_genre"/><br/>
+            </div>
+
+            <!-- Song 6 -->
+            <div class="song-block">
+                <div class="song-title-label">Song 6</div>
+                <label>Song Title:</label><input type="text" name="song6_title"/><br/>
+                <label>Songwriter:</label><input type="text" name="song6_songwriter"/><br/>
+                <label>Producer:</label><input type="text" name="song6_producer"/><br/>
+                <label>Engineer:</label><input type="text" name="song6_engineer"/><br/>
+                <label>BPM:</label><input type="text" name="song6_bpm"/><br/>
+                <label>Genre:</label><input type="text" name="song6_genre"/><br/>
+            </div>
+
+            <!-- Song 7 -->
+            <div class="song-block">
+                <div class="song-title-label">Song 7</div>
+                <label>Song Title:</label><input type="text" name="song7_title"/><br/>
+                <label>Songwriter:</label><input type="text" name="song7_songwriter"/><br/>
+                <label>Producer:</label><input type="text" name="song7_producer"/><br/>
+                <label>Engineer:</label><input type="text" name="song7_engineer"/><br/>
+                <label>BPM:</label><input type="text" name="song7_bpm"/><br/>
+                <label>Genre:</label><input type="text" name="song7_genre"/><br/>
+            </div>
+
+            <!-- Song 8 -->
+            <div class="song-block">
+                <div class="song-title-label">Song 8</div>
+                <label>Song Title:</label><input type="text" name="song8_title"/><br/>
+                <label>Songwriter:</label><input type="text" name="song8_songwriter"/><br/>
+                <label>Producer:</label><input type="text" name="song8_producer"/><br/>
+                <label>Engineer:</label><input type="text" name="song8_engineer"/><br/>
+                <label>BPM:</label><input type="text" name="song8_bpm"/><br/>
+                <label>Genre:</label><input type="text" name="song8_genre"/><br/>
+            </div>
+
+            <!-- Song 9 -->
+            <div class="song-block">
+                <div class="song-title-label">Song 9</div>
+                <label>Song Title:</label><input type="text" name="song9_title"/><br/>
+                <label>Songwriter:</label><input type="text" name="song9_songwriter"/><br/>
+                <label>Producer:</label><input type="text" name="song9_producer"/><br/>
+                <label>Engineer:</label><input type="text" name="song9_engineer"/><br/>
+                <label>BPM:</label><input type="text" name="song9_bpm"/><br/>
+                <label>Genre:</label><input type="text" name="song9_genre"/><br/>
+            </div>
+
+            <h2 class="section-title">Shared data with fans</h2>
+            <label>Upload Images:</label><input type="file" name="images" multiple/><br/>
+            <label>Upload Videos:</label><input type="file" name="videos" multiple/><br/>
+            <label>Upload Documents:</label><input type="file" name="documents" multiple/><br/>
+
+            <button type="submit">Save Meta</button>
+        </form>
+    </div>
 </main>
 </body>
 </html>

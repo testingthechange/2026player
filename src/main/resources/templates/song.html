@@ -1,111 +1,184 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title th:text="'Song ' + ${songId}">Song Page</title>
+    <title>Song Page - Block Radius</title>
+    <meta charset="UTF-8"/>
     <style>
-        table { border-collapse: collapse; margin-top: 15px; width: 90%; font-size: 0.9em; }
-        th, td { border: 1px solid #ccc; padding: 6px; text-align: center; }
-        th { background: #f5f5f5; }
-        .filename { font-size: 0.85em; color: #333; margin-top: 4px; }
-        .player-line { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
-        .player-line input[type=range] { flex: 1; }
-        .button-bar { margin-top: 20px; display: flex; gap: 15px; }
-        .button-bar button { padding: 8px 16px; font-size: 1em; }
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #ffffff;
+            color: #222222;
+        }
+        header {
+            background: #f5f5f5;
+            color: #222;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #dddddd;
+        }
+        header .title {
+            font-weight: bold;
+        }
+        header a {
+            color: #0073e6;
+            margin-left: 15px;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        header a:hover {
+            text-decoration: underline;
+        }
+        main {
+            padding: 20px;
+            max-width: 960px;
+            margin: 0 auto;
+        }
+        h1 {
+            margin-top: 0;
+        }
+        .card {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .context {
+            font-size: 0.9rem;
+            color: #555555;
+            margin-bottom: 12px;
+        }
+        .song-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .song-header h1 {
+            margin: 0 0 8px 0;
+        }
+        .dummy-player {
+            margin-top: 12px;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #dddddd;
+            background: #fafafa;
+            font-size: 0.9rem;
+        }
+        label {
+            display: inline-block;
+            width: 120px;
+            font-size: 0.9rem;
+            color: #333333;
+        }
+        input[type="text"] {
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 6px;
+            padding: 6px 8px;
+            border-radius: 4px;
+            border: 1px solid #cccccc;
+            font-size: 0.9rem;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #0073e6;
+            box-shadow: 0 0 0 1px rgba(0,115,230,0.2);
+        }
+        button {
+            cursor: pointer;
+            margin-top: 10px;
+            padding: 6px 12px;
+            border-radius: 4px;
+            border: 1px solid #0073e6;
+            background: #0073e6;
+            color: #ffffff;
+            font-size: 0.9rem;
+        }
+        button:hover {
+            background: #005bb5;
+            border-color: #005bb5;
+        }
+        .actions {
+            margin-top: 16px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
     </style>
-    <script>
-        function handleBridgeUpload(id, input) {
-            if (input.files.length > 0) {
-                const file = input.files[0];
-                document.getElementById("fileLabel" + id).textContent = file.name;
-                const audio = document.getElementById("audio" + id);
-                audio.src = URL.createObjectURL(file);
-            }
-        }
-        function play(id) {
-            document.getElementById("audio" + id).play();
-        }
-        function stop(id) {
-            const audio = document.getElementById("audio" + id);
-            audio.pause();
-            audio.currentTime = 0;
-        }
-        function initProgress(id) {
-            const audio = document.getElementById("audio" + id);
-            const progress = document.getElementById("progress" + id);
-            audio.addEventListener("timeupdate", () => {
-                if (audio.duration) {
-                    progress.value = (audio.currentTime / audio.duration) * 100;
-                }
-            });
-            progress.addEventListener("input", () => {
-                if (audio.duration) {
-                    audio.currentTime = (progress.value / 100) * audio.duration;
-                }
-            });
-        }
-        function renderRows(songId) {
-            const tbody = document.getElementById("bridgesTableBody");
-            tbody.innerHTML = "";
-            let counter = 1;
-            for (let i = 1; i <= 9; i++) {
-                if (i === songId) continue;
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>Song ${songId}</td>
-                    <td>Song ${i}</td>
-                    <td>
-                        <input type="file" accept="audio/*" onchange="handleBridgeUpload(${counter},this)">
-                        <div id="fileLabel${counter}" class="filename"></div>
-                        <div class="player-line">
-                            <button onclick="play(${counter})">▶️</button>
-                            <button onclick="stop(${counter})">⏹</button>
-                            <input type="range" id="progress${counter}" min="0" max="100" value="0">
-                        </div>
-                        <audio id="audio${counter}"></audio>
-                    </td>
-                `;
-                tbody.appendChild(row);
-                initProgress(counter);
-                counter++;
-            }
-        }
-        window.onload = function() {
-            const songId = parseInt(document.getElementById("songIdHolder").value);
-            renderRows(songId);
-        }
-    </script>
 </head>
 <body>
-    <div th:replace="fragments/navbar :: navbar"></div>
-    <h1 th:text="'Song ' + ${songId} + ' Page'">Song Page</h1>
-    <input type="hidden" id="songIdHolder" th:value="${songId}">
+<header>
+    <div class="title">Block Radius Player - Song Page</div>
+    <nav>
+        <a th:href="@{/player(producerId=${producerId}, projectIndex=${projectIndex})}">Back to Project</a>
+        <a th:href="@{/player/meta(producerId=${producerId}, projectIndex=${projectIndex})}">Project Meta</a>
+    </nav>
+</header>
 
-    <!-- Dropdown navigation -->
-    <label for="songSelect">Jump to:</label>
-    <select id="songSelect" onchange="location.href='/song/' + this.value">
-        <option value="1" th:selected="${songId == 1}">Song 1</option>
-        <option value="2" th:selected="${songId == 2}">Song 2</option>
-        <option value="3" th:selected="${songId == 3}">Song 3</option>
-        <option value="4" th:selected="${songId == 4}">Song 4</option>
-        <option value="5" th:selected="${songId == 5}">Song 5</option>
-        <option value="6" th:selected="${songId == 6}">Song 6</option>
-        <option value="7" th:selected="${songId == 7}">Song 7</option>
-        <option value="8" th:selected="${songId == 8}">Song 8</option>
-        <option value="9" th:selected="${songId == 9}">Song 9*</option>
-    </select>
+<main>
+    <div class="card">
+        <div class="song-header">
+            <div>
+                <h1>Song Page (Dummy)</h1>
+                <div class="context" th:if="${producer != null and project != null}">
+                    <p>
+                        <strong>Producer:</strong>
+                        <span th:text="${producer.name}">Producer Name</span><br/>
+                        <strong>Project:</strong>
+                        <span th:text="${project.name}">Project Name</span><br/>
+                        <strong>Track #:</strong>
+                        <span th:text="${track}">1</span>
+                    </p>
+                </div>
+                <div class="context" th:if="${producer == null or project == null}">
+                    <p>Song page is not currently linked to a specific project.</p>
+                </div>
+            </div>
+        </div>
 
-    <h2>Bridges for this Song</h2>
-    <table>
-        <thead>
-            <tr><th>From</th><th>To</th><th>Upload + Player</th></tr>
-        </thead>
-        <tbody id="bridgesTableBody"></tbody>
-    </table>
-
-    <!-- Two-tier buttons -->
-    <div class="button-bar">
-        <button onclick="alert('Preview not implemented yet')">👀 Preview Bridges</button>
-        <button onclick="confirm('Save/export placeholder')">💾 Save / Export</button>
+        <!-- Dummy audio player / waveform placeholder -->
+        <div class="dummy-player">
+            <p><strong>Audio Player (placeholder)</strong></p>
+            <p>This is where the waveform / player UI for this track will go.</p>
+        </div>
     </div>
+
+    <!-- Inline Meta Section for this Song (Dummy fields) -->
+    <div class="card">
+        <h2>Song Meta (Track <span th:text="${track}">1</span>)</h2>
+        <p class="context">
+            The producer will fill out credits and details here.  
+            Later, when they push the song bridge sheet back, this meta will go
+            into the Masters page and export pipeline.
+        </p>
+
+        <form th:action="@{/player/song/meta}" method="post">
+            <!-- Keep context so we can round-trip back to the same song -->
+            <input type="hidden" name="producerId" th:value="${producerId}"/>
+            <input type="hidden" name="projectIndex" th:value="${projectIndex}"/>
+            <input type="hidden" name="track" th:value="${track}"/>
+
+            <label>Song Title:</label><input type="text" name="song_title"/><br/>
+            <label>Songwriter:</label><input type="text" name="song_writer"/><br/>
+            <label>Producer:</label><input type="text" name="song_producer"/><br/>
+            <label>Engineer:</label><input type="text" name="song_engineer"/><br/>
+            <label>BPM:</label><input type="text" name="song_bpm"/><br/>
+            <label>Genre:</label><input type="text" name="song_genre"/><br/>
+
+            <div class="actions">
+                <button type="submit">Save Song Meta (dummy)</button>
+
+                <!-- Future: this will push song + meta back into Masters -->
+                <button type="submit">Push Song # to Block Radius (dummy)</button>
+            </div>
+        </form>
+    </div>
+</main>
 </body>
 </html>

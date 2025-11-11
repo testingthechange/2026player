@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Magic Callback</title>
+    <meta charset="UTF-8"/>
+    <style>
+        body { font-family: sans-serif; margin: 0; padding: 0; }
+        header { background: #222; color: #fff; padding: 10px 20px; }
+        header a { color: #ddd; margin-right: 15px; text-decoration: none; }
+        header a:hover { text-decoration: underline; }
+        main { padding: 20px; max-width: 900px; margin: 0 auto; }
+        code { background: #f0f0f0; padding: 2px 4px; }
+    </style>
+</head>
+<body>
+<header>
+    <span><strong>Block Radius Admin</strong></span>
+    &nbsp;&nbsp;
+    <a th:href="@{/dashboard}">Dashboard</a>
+    <a th:href="@{/producer}">Producer Accounts</a>
+    <a th:href="@{/pending}">Pending Room</a>
+    <a th:href="@{/meta}">Meta</a>
+    <a th:href="@{/export}">SaaS Export</a>
+    <a th:href="@{/accounts}">Admin Accounts</a>
+    <a th:href="@{/logout}">Logout</a>
+</header>
+
+<main>
+    <h1>Magic Link Callback</h1>
+    <p>
+        This is the endpoint that Magic redirects to after a producer logs in.
+        For now, we are just displaying the raw <code>token</code> query parameter.
+    </p>
+
+    <p>
+        Token (if present):
+        <code th:text="${token != null ? token : 'none'}">none</code>
+    </p>
+
+    <p>
+        Later, this page will:
+    </p>
+    <ul>
+        <li>Verify the Magic DID token</li>
+        <li>Look up the matching Producer + Project</li>
+        <li>Redirect the user to their player / worksheet UI</li>
+    </ul>
+</main>
+</body>
+</html>

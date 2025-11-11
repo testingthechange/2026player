@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="'Producer: ' + ${producer.name}">Producer Account</title>
+    <meta charset="UTF-8"/>
+    <style>
+        body { font-family: sans-serif; margin: 0; padding: 0; }
+        header { background: #222; color: #fff; padding: 10px 20px; }
+        header a { color: #ddd; margin-right: 15px; text-decoration: none; }
+        header a:hover { text-decoration: underline; }
+        main { padding: 20px; max-width: 900px; margin: 0 auto; }
+        input[type="text"], input[type="date"] {
+            width: 100%;
+            max-width: 400px;
+        }
+        table { border-collapse: collapse; width: 100%; max-width: 900px; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 6px 8px; text-align: left; }
+        th { background: #f5f5f5; }
+        .form-row { margin-bottom: 10px; }
+        label { display: inline-block; width: 120px; }
+        button { cursor: pointer; }
+        .actions { display: flex; gap: 6px; flex-wrap: wrap; }
+        .actions form { margin: 0; }
+        .link-text { font-size: 0.8rem; color: #333; word-break: break-all; }
+        .tabs { margin-top: 30px; margin-bottom: 10px; }
+        .tab-button {
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            background: #f5f5f5;
+            cursor: pointer;
+            margin-right: 6px;
+        }
+        .tab-button.active {
+            background: #ddd;
+            font-weight: bold;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body>
+<header>
+    <span><strong>Block Radius Admin</strong></span>
+    &nbsp;&nbsp;
+    <a th:href="@{/dashboard}">Dashboard</a>
+    <a th:href="@{/producer}">Producer Accounts</a>
+    <a th:href="@{/pending}">Pending Room</a>
+    <a th:href="@{/export}">SaaS Export</a>
+    <a th:href="@{/accounts}">Admin Accounts</a>
+    <a th:href="@{/logout}">Logout</a>
+</header>
+
+<main>
+    <h1 th:text="${producer.name}">Producer Name</h1>
+    <p>
+        <strong>Company:</strong> <span th:text="${producer.company}">Company</span><br/>
+        <strong>Email:</strong> <span th:text="${producer.email}">email@example.com</span><br/>
+        <strong>Contact #:</strong> <span th:text="${producer.phone}">+1 555 123 4567</span>
+    </p>
+
+    <h2>Create New Project</h2>
+    <form th:action="@{'/producer/' + ${producerId} + '/projects/create'}" method="post">
+        <div class="form-row">
+            <label for="projectName"><strong>Project Name</strong></label>
+            <input id="projectName" type="text" name="projectName" placeholder="Project / Album Name" required/>
+        </div>
+        <div class="form-row">
+            <label for="projectDate"><strong>Date</strong></label>
+            <input id="projectDate" type="date" name="projectDate"/>
+        </div>
+        <button type="submit">Create Project</button>
+    </form>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="tab-button active" type="button" onclick="showTab('projects')">Projects</button>
+        <button class="tab-button" type="button" onclick="showTab('masters')">Masters</button>
+    </div>
+
+    <!-- Projects Tab -->
+    <div id="tab-projects" class="tab-content active">
+        <h2>Projects</h2>
+        <p th:if="${#lists.isEmpty(producer.projects)}">
+            No projects created yet for this producer.
+        </p>
+
+        <table th:if="${!#lists.isEmpty(producer.projects)}">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Project Name</th>
+                <th>Date</th>
+                <th>Magic Link Sent</th>
+                <th>Expires</th>
+                <th>Magic Link URL (for testing)</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="proj, idx : ${producer.projects}">
+                <td th:text="${idx.index + 1}">1</td>
+                <td th:text="${proj.name}">Example Project</td>
+                <td th:text="${proj.date}">2025-11-10</td>
+                <td th:text="${proj.magicLinkSentAt != null ? proj.magicLinkSentAt : 'Not sent'}">
+                    Not sent
+                </td>
+                <td>
+                    <span th:if="${proj.magicExpiresAt != null}">
+                        <span th:text="${proj.magicExpiresAt}">2025-11-19 12:00:00</span>
+                    </span>
+                    <span th:if="${proj.magicExpiresAt == null}">
+                        N/A
+                    </span>
+                </td>
+                <td>
+                    <span class="link-text"
+                          th:if="${proj.magicId != null}"
+                          th:text="${'http://localhost:8080/magic/callback?magicId=' + proj.magicId}">
+                        http://localhost:8080/magic/callback?magicId=...
+                    </span>
+                    <span th:if="${proj.magicId == null}">No link generated yet</span>
+                </td>
+                <td class="actions">
+                    <!-- Primary Send (locked after first send) -->
+                    <form th:action="@{'/producer/' + ${producerId} + '/projects/' + ${idx.index} + '/magic-link'}"
+                          method="post">
+                        <!-- When no magicId: active send button -->
+                        <button type="submit"
+                                th:if="${proj.magicId == null}">
+                            Send Magic Link
+                        </button>
+
+                        <!-- When magicId exists: show locked/disabled button -->
+                        <button type="button"
+                                th:if="${proj.magicId != null}"
+                                disabled>
+                            Magic Link Sent
+                        </button>
+                    </form>
+
+                    <!-- Resend Magic Link with confirmation (only if a link exists) -->
+                    <form th:if="${proj.magicId != null}"
+                          th:action="@{'/producer/' + ${producerId} + '/projects/' + ${idx.index} + '/magic-link'}"
+                          method="post">
+                        <button type="button"
+                                onclick="confirmResend(this.form)">
+                            Resend
+                        </button>
+                    </form>
+
+                    <!-- Expire Link Now (only if a link exists) -->
+                    <form th:if="${proj.magicId != null}"
+                          th:action="@{'/producer/' + ${producerId} + '/projects/' + ${idx.index} + '/magic-expire'}"
+                          method="post">
+                        <button type="button"
+                                onclick="confirmExpire(this.form)">
+                            Expire Link Now
+                        </button>
+                    </form>
+
+                    <!-- Preview Work -->
+                    <a th:href="@{'/producer/' + ${producerId} + '/projects/' + ${idx.index} + '/preview'}">
+                        <button type="button">Preview Work</button>
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Masters Tab -->
+    <div id="tab-masters" class="tab-content">
+        <h2>Masters</h2>
+        <p th:if="${#lists.isEmpty(producer.masters)}">
+            No masters received yet for this producer.
+        </p>
+
+        <table th:if="${!#lists.isEmpty(producer.masters)}">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Type</th>
+                <th>Project</th>
+                <th>Saved At</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="master, idx : ${producer.masters}">
+                <td th:text="${idx.index + 1}">1</td>
+                <td th:text="${master.type}">Album Master</td>
+                <td th:text="${master.projectName}">Project Name</td>
+                <td th:text="${master.savedAt}">2025-11-10 15:30:00</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<script>
+    function showTab(which) {
+        const projectsTab = document.getElementById('tab-projects');
+        const mastersTab = document.getElementById('tab-masters');
+        const buttons = document.querySelectorAll('.tab-button');
+
+        projectsTab.classList.remove('active');
+        mastersTab.classList.remove('active');
+
+        if (which === 'projects') {
+            projectsTab.classList.add('active');
+        } else {
+            mastersTab.classList.add('active');
+        }
+
+        buttons.forEach(btn => btn.classList.remove('active'));
+        if (which === 'projects') {
+            buttons[0].classList.add('active');
+        } else {
+            buttons[1].classList.add('active');
+        }
+    }
+
+    function confirmResend(form) {
+        const ok = confirm("Are you sure you want to resend this magic link?");
+        if (ok) {
+            form.submit();
+        }
+    }
+
+    function confirmExpire(form) {
+        const ok = confirm("Are you sure you want to expire this magic link?");
+        if (ok) {
+            form.submit();
+        }
+    }
+</script>
+</body>
+</html>

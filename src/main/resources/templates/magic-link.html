@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Block Radius Magic Link Player</title>
+    <meta charset="UTF-8"/>
+    <style>
+        body { font-family: sans-serif; margin: 0; padding: 0; background: #050509; color: #f5f5f5; }
+        header { background: #111; color: #fff; padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; }
+        header .title { font-weight: bold; }
+        header a { color: #bbb; margin-left: 15px; text-decoration: none; font-size: 0.9rem; }
+        header a:hover { text-decoration: underline; }
+        main { padding: 20px; max-width: 960px; margin: 0 auto; }
+        h1 { margin-top: 0; }
+        .card {
+            background: #161623;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+            border: 1px solid #2a2a3a;
+        }
+        .context {
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+        .actions {
+            margin-top: 16px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .tracks {
+            margin-top: 16px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .tracks button {
+            padding: 6px 10px;
+            border-radius: 4px;
+            border: 1px solid #444;
+            background: #23233a;
+            color: #f5f5f5;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .tracks button:hover {
+            background: #303054;
+        }
+        button { cursor: pointer; }
+    </style>
+</head>
+<body>
+<header>
+    <div class="title">Block Radius Player</div>
+    <nav>
+        <!-- Admin links for internal testing -->
+        <a th:href="@{/dashboard}">Admin Dashboard</a>
+        <a th:href="@{/producer}">Producer Accounts</a>
+        <a th:href="@{/logout}">Logout</a>
+    </nav>
+</header>
+
+<main>
+    <div class="card">
+        <h1>Magic Link Player</h1>
+        <p>
+            This is the player page that will load when a user logs in via Magic email.
+            Later we can embed the real adaptive album UI here.
+        </p>
+
+        <div class="context" th:if="${producer != null and project != null}">
+            <p>
+                <strong>Producer:</strong>
+                <span th:text="${producer.name}">Producer Name</span><br/>
+                <strong>Project:</strong>
+                <span th:text="${project.name}">Project Name</span><br/>
+                <strong>Date:</strong>
+                <span th:text="${project.date}">2025-11-10</span>
+            </p>
+
+            <!-- Tracks section: Song 1–9 pages -->
+            <div class="tracks" th:if="${producerId != null and projectIndex != null}">
+                <a th:href="@{/player/song(producerId=${producerId}, projectIndex=${projectIndex}, track=1)}">
+                    <button type="button">Song 1</button>
+                </a>
+                <a th:href="@{/player/song(producerId=${producerId}, projectIndex=${projectIndex}, track=2)}">
+                    <button type="button">Song 2</button>
+                </a>
+                <a th:href="@{/player/song(producerId=${producerId}, projectIndex=${projectIndex}, track=3)}">
+                    <button type="button">Song 3</button>
+                </a>
+                <a th:href="@{/player/song(producerId=${producerId}, projectIndex=${projectIndex}, track=4)}">
+                    <button type="button">Song 4</button>
+                </a>
+                <a th:href="@{/player/song(producerId=${producerId}, projectIndex=${projectIndex}, track=5)}">
+                    <button type="button">Song 5</button>
+                </a>
+                <a th:href="@{/player/song(producerId=${producerId}, projectIndex=${projectIndex}, track=6)}">
+                    <button type="button">Song 6</button>
+                </a>
+                <a th:href="@{/player/song(producerId=${producerId}, projectIndex=${projectIndex}, track=7)}">
+                    <button type="button">Song 7</button>
+                </a>
+                <a th:href="@{/player/song(producerId=${producerId}, projectIndex=${projectIndex}, track=8)}">
+                    <button type="button">Song 8</button>
+                </a>
+                <a th:href="@{/player/song(producerId=${producerId}, projectIndex=${projectIndex}, track=9)}">
+                    <button type="button">Song 9</button>
+                </a>
+            </div>
+
+            <!-- Navigation into Meta (credits) page -->
+            <div class="actions" th:if="${producerId != null and projectIndex != null}">
+                <a th:href="@{/player/meta(producerId=${producerId}, projectIndex=${projectIndex})}">
+                    <button type="button">Open Meta Data Page</button>
+                </a>
+            </div>
+
+            <!-- Simulated Master Save buttons for beta/dev -->
+            <div class="actions" th:if="${producerId != null and projectIndex != null}">
+                <form th:action="@{'/producer/' + ${producerId} + '/projects/' + ${projectIndex} + '/masters/create'}"
+                      method="post">
+                    <input type="hidden" name="masterType" value="Album Master"/>
+                    <button type="submit">Save Album Master</button>
+                </form>
+
+                <form th:action="@{'/producer/' + ${producerId} + '/projects/' + ${projectIndex} + '/masters/create'}"
+                      method="post">
+                    <input type="hidden" name="masterType" value="NFT Mix Album"/>
+                    <button type="submit">Save NFT Mix Album Master</button>
+                </form>
+
+                <form th:action="@{'/producer/' + ${producerId} + '/projects/' + ${projectIndex} + '/masters/create'}"
+                      method="post">
+                    <input type="hidden" name="masterType" value="Song Master"/>
+                    <button type="submit">Save Song Master</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="context" th:if="${producer == null or project == null}">
+            <p>No specific producer/project context found for this session.</p>
+        </div>
+    </div>
+</main>
+</body>
+</html>
